@@ -10,7 +10,13 @@ import {
   Shield,
   Zap,
   Info,
-  Plus
+  Plus,
+  Newspaper,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus,
+  RefreshCw,
+  Lightbulb
 } from "lucide-react";
 import {
   PieChart,
@@ -40,14 +46,22 @@ const allocationData = [
 ];
 
 const holdings = [
-  { symbol: "HDFCBANK", name: "HDFC Bank", weight: 12.5, return: "+24.3%", risk: "Low" },
-  { symbol: "ICICIBANK", name: "ICICI Bank", weight: 11.2, return: "+18.7%", risk: "Low" },
-  { symbol: "TCS", name: "Tata Consultancy", weight: 10.8, return: "+12.1%", risk: "Medium" },
-  { symbol: "INFY", name: "Infosys", weight: 9.4, return: "+8.5%", risk: "Medium" },
-  { symbol: "KOTAKBANK", name: "Kotak Bank", weight: 8.3, return: "+15.2%", risk: "Low" },
-  { symbol: "RELIANCE", name: "Reliance Industries", weight: 7.5, return: "-2.4%", risk: "Medium" },
-  { symbol: "HINDUNILVR", name: "Hindustan Unilever", weight: 6.8, return: "+5.8%", risk: "Low" },
-  { symbol: "SUNPHARMA", name: "Sun Pharma", weight: 5.2, return: "+11.3%", risk: "Medium" },
+  { symbol: "HDFCBANK", name: "HDFC Bank", weight: 12.5, return: "+24.3%", risk: "Low", news: "Q3 results beat estimates, NIM expansion continues" },
+  { symbol: "ICICIBANK", name: "ICICI Bank", weight: 11.2, return: "+18.7%", risk: "Low", news: null },
+  { symbol: "TCS", name: "Tata Consultancy", weight: 10.8, return: "+12.1%", risk: "Medium", news: "New $500M deal signed with US retailer" },
+  { symbol: "INFY", name: "Infosys", weight: 9.4, return: "+8.5%", risk: "Medium", news: null },
+  { symbol: "KOTAKBANK", name: "Kotak Bank", weight: 8.3, return: "+15.2%", risk: "Low", news: null },
+  { symbol: "RELIANCE", name: "Reliance Industries", weight: 7.5, return: "-2.4%", risk: "Medium", news: "RIL Q3 profit falls 4.8%, refining margins weak" },
+  { symbol: "HINDUNILVR", name: "Hindustan Unilever", weight: 6.8, return: "+5.8%", risk: "Low", news: null },
+  { symbol: "SUNPHARMA", name: "Sun Pharma", weight: 5.2, return: "+11.3%", risk: "Medium", news: "FDA approves new generic drug application" },
+];
+
+const rebalancingIdeas = [
+  { type: "reduce", symbol: "HDFCBANK", reason: "High concentration at 12.5%, consider trimming 2-3% to diversify", urgency: "medium" },
+  { type: "add", symbol: "BHARTIARTL", reason: "Strong 5G rollout momentum, defensive telecom exposure lacking in portfolio", urgency: "high" },
+  { type: "reduce", symbol: "RELIANCE", reason: "Underperforming at -2.4%, weak refining outlook persists", urgency: "low" },
+  { type: "add", symbol: "ITC", reason: "Defensive FMCG play with improving cigarette volumes and hotel recovery", urgency: "medium" },
+  { type: "remove", symbol: "KOTAKBANK", reason: "Consolidate banking exposure - already have HDFC and ICICI", urgency: "low" },
 ];
 
 const riskMetrics = [
@@ -258,32 +272,49 @@ export default function Portfolio() {
             transition={{ delay: 0.5 }}
             className="glass-card p-6"
           >
-            <h3 className="font-semibold mb-4">Top Holdings</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-semibold">Top Holdings</h3>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Newspaper className="w-3 h-3" />
+                <span>News enabled</span>
+              </div>
+            </div>
             <div className="space-y-3">
               {holdings.map((holding, index) => (
-                <div
-                  key={holding.symbol}
-                  className="flex items-center justify-between p-3 rounded-lg bg-secondary/30"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <span className="text-xs font-mono font-bold text-primary">
-                        {holding.symbol.slice(0, 2)}
-                      </span>
+                <div key={holding.symbol}>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/30">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <span className="text-xs font-mono font-bold text-primary">
+                          {holding.symbol.slice(0, 2)}
+                        </span>
+                      </div>
+                      <div>
+                        <div className="font-medium font-mono text-sm">{holding.symbol}</div>
+                        <div className="text-xs text-muted-foreground">{holding.name}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-medium font-mono text-sm">{holding.symbol}</div>
-                      <div className="text-xs text-muted-foreground">{holding.name}</div>
+                    <div className="text-right">
+                      <div className={`font-mono text-sm ${
+                        holding.return.startsWith('+') ? 'stat-gain' : 'stat-loss'
+                      }`}>
+                        {holding.return}
+                      </div>
+                      <div className="text-xs text-muted-foreground">{holding.weight}% weight</div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className={`font-mono text-sm ${
-                      holding.return.startsWith('+') ? 'stat-gain' : 'stat-loss'
-                    }`}>
-                      {holding.return}
-                    </div>
-                    <div className="text-xs text-muted-foreground">{holding.weight}% weight</div>
-                  </div>
+                  {holding.news && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      className="ml-4 mt-1 p-2 rounded-lg bg-accent/5 border-l-2 border-accent/50"
+                    >
+                      <div className="flex items-start gap-2">
+                        <Newspaper className="w-3 h-3 text-accent mt-0.5 flex-shrink-0" />
+                        <p className="text-xs text-muted-foreground leading-relaxed">{holding.news}</p>
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
               ))}
             </div>
@@ -350,6 +381,73 @@ export default function Portfolio() {
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* Rebalancing Ideas */}
+            <div className="mt-4 p-4 rounded-lg bg-accent/5 border border-accent/20">
+              <div className="flex items-center gap-2 mb-3">
+                <RefreshCw className="w-4 h-4 text-accent" />
+                <span className="text-sm font-medium">Rebalancing Suggestions</span>
+              </div>
+              <div className="space-y-2">
+                {rebalancingIdeas.map((idea, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 * index }}
+                    className="flex items-start gap-2 p-2 rounded-lg bg-secondary/30"
+                  >
+                    <div className={`p-1 rounded-md flex-shrink-0 ${
+                      idea.type === 'add' ? 'bg-gain/10' :
+                      idea.type === 'reduce' ? 'bg-warning/10' :
+                      'bg-loss/10'
+                    }`}>
+                      {idea.type === 'add' ? (
+                        <ArrowUpRight className="w-3 h-3 text-gain" />
+                      ) : idea.type === 'reduce' ? (
+                        <Minus className="w-3 h-3 text-warning" />
+                      ) : (
+                        <ArrowDownRight className="w-3 h-3 text-loss" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs font-semibold uppercase ${
+                          idea.type === 'add' ? 'text-gain' :
+                          idea.type === 'reduce' ? 'text-warning' :
+                          'text-loss'
+                        }`}>
+                          {idea.type}
+                        </span>
+                        <span className="text-xs font-mono font-medium">{idea.symbol}</span>
+                        <span className={`px-1.5 py-0.5 rounded text-[10px] ${
+                          idea.urgency === 'high' ? 'bg-loss/10 text-loss' :
+                          idea.urgency === 'medium' ? 'bg-warning/10 text-warning' :
+                          'bg-muted text-muted-foreground'
+                        }`}>
+                          {idea.urgency}
+                        </span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">{idea.reason}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+
+            {/* News-Based Insights */}
+            <div className="mt-4 p-4 rounded-lg bg-warning/5 border border-warning/20">
+              <div className="flex items-center gap-2 mb-2">
+                <Lightbulb className="w-4 h-4 text-warning" />
+                <span className="text-sm font-medium">News-Based Risk Alert</span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Based on recent news, <span className="font-mono text-foreground">RELIANCE</span> shows 
+                continued weakness in refining margins. Given your moderate risk appetite, consider 
+                reducing exposure by 2-3% and reallocating to <span className="font-mono text-foreground">BHARTIARTL</span> 
+                which has strong 5G tailwinds.
+              </p>
             </div>
           </motion.div>
         </div>

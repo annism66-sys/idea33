@@ -17,7 +17,10 @@ import {
   RefreshCw,
   Lightbulb,
   Zap,
-  Shield
+  Shield,
+  ArrowRight,
+  Info,
+  Star
 } from "lucide-react";
 
 interface Rule {
@@ -48,6 +51,41 @@ const tips = [
   { icon: Shield, text: "Define exit rules for profit-taking and stop-loss" },
   { icon: Target, text: "Set position sizing limits to manage risk" },
   { icon: RefreshCw, text: "Include rebalancing frequency for systematic approach" },
+];
+
+const readyMadeStrategies = [
+  {
+    name: "Nifty Momentum Alpha",
+    badge: "Popular",
+    description: "A momentum-based strategy tracking top Nifty 50 stocks with strong relative strength.",
+    performance: { oneYear: "+32.45%", inception: "+156.8%" },
+    riskScore: 3.8,
+    methodology: "Ranks Nifty 50 by 6-month momentum, holds top 10, rebalances monthly"
+  },
+  {
+    name: "Banking Sector Rotation",
+    badge: "Partner Fund",
+    description: "Rotates between PSU and private banks based on relative value and momentum signals.",
+    performance: { oneYear: "+28.12%", inception: "+89.2%" },
+    riskScore: 4.1,
+    methodology: "RSI-based entry, tracks Bank Nifty constituents with sector rotation"
+  },
+  {
+    name: "Dividend Yield Compounder",
+    badge: "Low Risk",
+    description: "Focuses on high dividend yield stocks with consistent payout history and low volatility.",
+    performance: { oneYear: "+18.76%", inception: "+67.4%" },
+    riskScore: 2.4,
+    methodology: "Selects top 15 dividend yield stocks, minimum 5-year payout history"
+  },
+  {
+    name: "Small Cap Growth Hunter",
+    badge: "High Risk",
+    description: "Aggressive strategy targeting small-cap stocks with strong earnings growth momentum.",
+    performance: { oneYear: "+45.23%", inception: "+210.5%" },
+    riskScore: 4.8,
+    methodology: "EPS growth > 20%, market cap < 5000 Cr, quarterly rebalancing"
+  },
 ];
 
 export default function Strategy() {
@@ -201,6 +239,74 @@ export default function Strategy() {
                       <tip.icon className="w-3.5 h-3.5 text-gain" />
                     </div>
                     <span className="text-sm text-muted-foreground">{tip.text}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Ready-Made Strategies */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="glass-card p-5 rounded-2xl"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Star className="w-4 h-4 text-primary" />
+                  Ready-Made Strategies
+                </h3>
+                <span className="text-xs text-muted-foreground">Curated for you</span>
+              </div>
+              <div className="space-y-3">
+                {readyMadeStrategies.map((strategy, index) => (
+                  <motion.div
+                    key={strategy.name}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 + index * 0.1 }}
+                    className="group p-4 rounded-xl bg-secondary/30 hover:bg-secondary/50 border border-border/50 hover:border-primary/30 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium text-sm">{strategy.name}</h4>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                            strategy.badge === 'Popular' ? 'bg-primary/10 text-primary' :
+                            strategy.badge === 'Partner Fund' ? 'bg-accent/10 text-accent' :
+                            strategy.badge === 'Low Risk' ? 'bg-gain/10 text-gain' :
+                            'bg-loss/10 text-loss'
+                          }`}>
+                            {strategy.badge}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground line-clamp-2">{strategy.description}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between mt-3">
+                      <div className="flex items-center gap-4">
+                        <div>
+                          <div className="text-[10px] text-muted-foreground">1-Year</div>
+                          <div className="text-sm font-mono font-medium text-gain">{strategy.performance.oneYear}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-muted-foreground">Risk Score</div>
+                          <div className="text-sm font-mono font-medium">
+                            <span className={
+                              strategy.riskScore < 3 ? 'text-gain' :
+                              strategy.riskScore < 4 ? 'text-warning' :
+                              'text-loss'
+                            }>{strategy.riskScore}</span>
+                            <span className="text-muted-foreground">/5</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span>View strategy</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </div>
+                    </div>
                   </motion.div>
                 ))}
               </div>
