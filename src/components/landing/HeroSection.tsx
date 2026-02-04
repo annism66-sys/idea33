@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles, TrendingUp, Shield, Zap } from "lucide-react";
+import { ArrowRight, Sparkles, TrendingUp, Shield, Zap, Link2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { BrokerConnect } from "@/components/BrokerConnect";
 
 const stats = [
   { value: "₹10Cr+", label: "Backtested Volume" },
@@ -102,9 +103,15 @@ export function HeroSection() {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Button variant="glass" size="xl">
-              Watch Demo
-            </Button>
+            <BrokerConnect 
+              variant="hero"
+              trigger={
+                <Button variant="glass" size="xl" className="gap-2">
+                  <Link2 className="w-5 h-5" />
+                  Connect Broker
+                </Button>
+              }
+            />
           </motion.div>
 
           {/* Feature Pills */}
