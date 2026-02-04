@@ -1,20 +1,23 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { 
   Sparkles, 
-  ArrowRight,
   Play,
   Plus,
   Trash2,
   GripVertical,
   Check,
-  X,
-  ChevronDown,
-  ChevronUp,
-  Wand2
+  Wand2,
+  TrendingUp,
+  TrendingDown,
+  Target,
+  RefreshCw,
+  Lightbulb,
+  Zap,
+  Shield
 } from "lucide-react";
 
 interface Rule {
@@ -34,10 +37,17 @@ const initialRules: Rule[] = [
 ];
 
 const ruleTypes = [
-  { value: "entry", label: "Entry Signal", color: "bg-gain/10 text-gain border-gain/20" },
-  { value: "exit", label: "Exit Signal", color: "bg-loss/10 text-loss border-loss/20" },
-  { value: "position", label: "Position Size", color: "bg-accent/10 text-accent border-accent/20" },
-  { value: "rebalance", label: "Rebalancing", color: "bg-warning/10 text-warning border-warning/20" },
+  { value: "entry", label: "Entry Signal", icon: TrendingUp, gradient: "from-gain/20 to-gain/5", border: "border-gain/30", text: "text-gain", glow: "shadow-gain/20" },
+  { value: "exit", label: "Exit Signal", icon: TrendingDown, gradient: "from-loss/20 to-loss/5", border: "border-loss/30", text: "text-loss", glow: "shadow-loss/20" },
+  { value: "position", label: "Position Size", icon: Target, gradient: "from-accent/20 to-accent/5", border: "border-accent/30", text: "text-accent", glow: "shadow-accent/20" },
+  { value: "rebalance", label: "Rebalancing", icon: RefreshCw, gradient: "from-warning/20 to-warning/5", border: "border-warning/30", text: "text-warning", glow: "shadow-warning/20" },
+];
+
+const tips = [
+  { icon: Lightbulb, text: "Specify clear entry conditions (e.g., \"buy when RSI is below 30\")" },
+  { icon: Shield, text: "Define exit rules for profit-taking and stop-loss" },
+  { icon: Target, text: "Set position sizing limits to manage risk" },
+  { icon: RefreshCw, text: "Include rebalancing frequency for systematic approach" },
 ];
 
 export default function Strategy() {
@@ -46,7 +56,6 @@ export default function Strategy() {
   );
   const [rules, setRules] = useState<Rule[]>(initialRules);
   const [isConverting, setIsConverting] = useState(false);
-  const [expandedRules, setExpandedRules] = useState<Record<string, boolean>>({});
 
   const handleConvertToRules = () => {
     setIsConverting(true);
@@ -75,12 +84,8 @@ export default function Strategy() {
     setRules([...rules, newRule]);
   };
 
-  const getRuleTypeStyle = (type: string) => {
-    return ruleTypes.find(t => t.value === type)?.color || "";
-  };
-
-  const getRuleTypeLabel = (type: string) => {
-    return ruleTypes.find(t => t.value === type)?.label || type;
+  const getRuleType = (type: string) => {
+    return ruleTypes.find(t => t.value === type);
   };
 
   const groupedRules = rules.reduce((acc, rule) => {
@@ -91,15 +96,21 @@ export default function Strategy() {
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-10 text-center"
         >
-          <h1 className="text-3xl font-bold mb-2">Strategy Builder</h1>
-          <p className="text-muted-foreground">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
+            <Zap className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-primary">AI-Powered Strategy Builder</span>
+          </div>
+          <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text">
+            Build Your Strategy
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             Describe your investment strategy in plain English and let AI convert it to executable rules
           </p>
         </motion.div>
@@ -112,61 +123,88 @@ export default function Strategy() {
             transition={{ delay: 0.1 }}
             className="space-y-6"
           >
-            <div className="glass-card p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Wand2 className="w-5 h-5 text-primary" />
-                <h2 className="text-lg font-semibold">Describe Your Strategy</h2>
-              </div>
-              <Textarea
-                value={strategyInput}
-                onChange={(e) => setStrategyInput(e.target.value)}
-                placeholder="Describe your investment strategy in plain English..."
-                className="min-h-[200px] bg-secondary/30 border-border/50 resize-none"
-              />
-              <div className="flex items-center gap-3 mt-4">
-                <Button
-                  variant="hero"
-                  onClick={handleConvertToRules}
-                  disabled={isConverting}
-                  className="flex-1"
+            {/* Main Input Card */}
+            <div className="relative group">
+              <div className="absolute -inset-[1px] bg-gradient-to-r from-primary/50 via-accent/50 to-primary/50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-sm" />
+              <div className="relative glass-card-elevated p-6 rounded-2xl">
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20">
+                    <Wand2 className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-semibold">Describe Your Strategy</h2>
+                    <p className="text-xs text-muted-foreground">Use natural language to define your rules</p>
+                  </div>
+                </div>
+                
+                <div className="relative">
+                  <Textarea
+                    value={strategyInput}
+                    onChange={(e) => setStrategyInput(e.target.value)}
+                    placeholder="Describe your investment strategy in plain English..."
+                    className="min-h-[180px] bg-secondary/50 border-border/50 resize-none text-sm leading-relaxed focus:border-primary/50 transition-colors rounded-xl"
+                  />
+                  <div className="absolute bottom-3 right-3 text-xs text-muted-foreground">
+                    {strategyInput.length} characters
+                  </div>
+                </div>
+
+                <motion.div 
+                  className="mt-5"
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
                 >
-                  {isConverting ? (
-                    <>
-                      <Sparkles className="w-4 h-4 animate-pulse" />
-                      Converting...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4" />
-                      Convert to Rules
-                    </>
-                  )}
-                </Button>
+                  <Button
+                    variant="hero"
+                    onClick={handleConvertToRules}
+                    disabled={isConverting}
+                    className="w-full h-12 text-base relative overflow-hidden group"
+                  >
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                    {isConverting ? (
+                      <>
+                        <Sparkles className="w-5 h-5 animate-spin" />
+                        <span>Converting to Rules...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-5 h-5" />
+                        <span>Convert to Rules</span>
+                      </>
+                    )}
+                  </Button>
+                </motion.div>
               </div>
             </div>
 
-            {/* Quick Tips */}
-            <div className="glass-card p-6">
-              <h3 className="font-semibold mb-3">Strategy Building Tips</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-gain mt-0.5" />
-                  <span>Specify clear entry conditions (e.g., "buy when RSI is below 30")</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-gain mt-0.5" />
-                  <span>Define exit rules for profit-taking and stop-loss</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-gain mt-0.5" />
-                  <span>Set position sizing limits to manage risk</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-4 h-4 text-gain mt-0.5" />
-                  <span>Include rebalancing frequency for systematic approach</span>
-                </li>
-              </ul>
-            </div>
+            {/* Tips Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="glass-card p-5 rounded-2xl"
+            >
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <Lightbulb className="w-4 h-4 text-warning" />
+                Strategy Building Tips
+              </h3>
+              <div className="space-y-3">
+                {tips.map((tip, index) => (
+                  <motion.div 
+                    key={index}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 + index * 0.1 }}
+                    className="flex items-start gap-3 p-3 rounded-xl bg-secondary/30 hover:bg-secondary/50 transition-colors"
+                  >
+                    <div className="p-1.5 rounded-lg bg-gain/10">
+                      <tip.icon className="w-3.5 h-3.5 text-gain" />
+                    </div>
+                    <span className="text-sm text-muted-foreground">{tip.text}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
           </motion.div>
 
           {/* Rules Editor */}
@@ -175,83 +213,141 @@ export default function Strategy() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <div className="glass-card p-6">
+            <div className="glass-card-elevated p-6 rounded-2xl">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold">Strategy Rules</h2>
-                <div className="flex items-center gap-2">
-                  {ruleTypes.map((type) => (
-                    <button
-                      key={type.value}
-                      onClick={() => addRule(type.value as Rule["type"])}
-                      className="p-2 rounded-lg hover:bg-secondary/50 transition-colors"
-                      title={`Add ${type.label}`}
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  ))}
+                <div>
+                  <h2 className="text-lg font-semibold">Strategy Rules</h2>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {rules.filter(r => r.enabled).length} of {rules.length} rules active
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {ruleTypes.map((type) => {
+                    const Icon = type.icon;
+                    return (
+                      <motion.button
+                        key={type.value}
+                        onClick={() => addRule(type.value as Rule["type"])}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`p-2 rounded-lg bg-gradient-to-br ${type.gradient} border ${type.border} ${type.text} hover:shadow-lg ${type.glow} transition-all`}
+                        title={`Add ${type.label}`}
+                      >
+                        <Plus className="w-4 h-4" />
+                      </motion.button>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="space-y-6">
-                {Object.entries(groupedRules).map(([type, typeRules]) => (
-                  <div key={type}>
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className={`px-2 py-1 rounded-md border text-xs font-medium ${getRuleTypeStyle(type)}`}>
-                        {getRuleTypeLabel(type)}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {typeRules.length} rule{typeRules.length !== 1 ? "s" : ""}
-                      </span>
-                    </div>
-                    <div className="space-y-2">
-                      {typeRules.map((rule, index) => (
-                        <motion.div
-                          key={rule.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className={`flex items-center gap-3 p-3 rounded-lg bg-secondary/30 border border-border/50 ${
-                            !rule.enabled ? "opacity-50" : ""
-                          }`}
-                        >
-                          <GripVertical className="w-4 h-4 text-muted-foreground cursor-grab" />
-                          <button
-                            onClick={() => toggleRule(rule.id)}
-                            className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                              rule.enabled
-                                ? "bg-primary border-primary"
-                                : "border-border"
-                            }`}
-                          >
-                            {rule.enabled && <Check className="w-3 h-3 text-primary-foreground" />}
-                          </button>
-                          <span className="flex-1 text-sm font-mono">{rule.condition}</span>
-                          <button
-                            onClick={() => deleteRule(rule.id)}
-                            className="p-1 rounded hover:bg-loss/20 text-muted-foreground hover:text-loss transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </motion.div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+              <div className="space-y-5 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                <AnimatePresence mode="popLayout">
+                  {Object.entries(groupedRules).map(([type, typeRules]) => {
+                    const ruleType = getRuleType(type);
+                    if (!ruleType) return null;
+                    const Icon = ruleType.icon;
+                    
+                    return (
+                      <motion.div 
+                        key={type}
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r ${ruleType.gradient} border ${ruleType.border}`}>
+                            <Icon className={`w-3.5 h-3.5 ${ruleType.text}`} />
+                            <span className={`text-xs font-semibold ${ruleType.text}`}>
+                              {ruleType.label}
+                            </span>
+                          </div>
+                          <span className="text-xs text-muted-foreground">
+                            {typeRules.length} rule{typeRules.length !== 1 ? "s" : ""}
+                          </span>
+                        </div>
+                        
+                        <div className="space-y-2 ml-1">
+                          <AnimatePresence mode="popLayout">
+                            {typeRules.map((rule, index) => (
+                              <motion.div
+                                key={rule.id}
+                                layout
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95, x: -20 }}
+                                transition={{ delay: index * 0.03 }}
+                                className={`group flex items-center gap-3 p-3.5 rounded-xl bg-secondary/40 border border-border/50 hover:bg-secondary/60 hover:border-border transition-all ${
+                                  !rule.enabled ? "opacity-40" : ""
+                                }`}
+                              >
+                                <GripVertical className="w-4 h-4 text-muted-foreground/50 cursor-grab opacity-0 group-hover:opacity-100 transition-opacity" />
+                                
+                                <motion.button
+                                  onClick={() => toggleRule(rule.id)}
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${
+                                    rule.enabled
+                                      ? `bg-gradient-to-br ${ruleType.gradient} ${ruleType.border}`
+                                      : "border-border hover:border-muted-foreground"
+                                  }`}
+                                >
+                                  {rule.enabled && <Check className={`w-3 h-3 ${ruleType.text}`} />}
+                                </motion.button>
+                                
+                                <span className="flex-1 text-sm font-mono text-foreground/90">{rule.condition}</span>
+                                
+                                <motion.button
+                                  onClick={() => deleteRule(rule.id)}
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  className="p-1.5 rounded-lg opacity-0 group-hover:opacity-100 hover:bg-loss/20 text-muted-foreground hover:text-loss transition-all"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </motion.button>
+                              </motion.div>
+                            ))}
+                          </AnimatePresence>
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </AnimatePresence>
               </div>
 
-              <div className="mt-6 pt-6 border-t border-border/50 flex items-center justify-between">
-                <div className="text-sm text-muted-foreground">
-                  {rules.filter(r => r.enabled).length} of {rules.length} rules active
-                </div>
-                <Button variant="hero" className="group">
-                  Run Backtest
-                  <Play className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
+              <div className="mt-6 pt-6 border-t border-border/50">
+                <motion.div
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                >
+                  <Button variant="hero" className="w-full h-12 text-base group relative overflow-hidden">
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                    <Play className="w-5 h-5" />
+                    <span>Run Backtest</span>
+                  </Button>
+                </motion.div>
               </div>
             </div>
           </motion.div>
         </div>
       </div>
+
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: hsl(var(--border));
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: hsl(var(--muted-foreground));
+        }
+      `}</style>
     </DashboardLayout>
   );
 }
