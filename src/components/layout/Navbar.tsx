@@ -9,9 +9,11 @@ import {
   PieChart, 
   Bot,
   Menu,
-  X
+  X,
+  Link2
 } from "lucide-react";
 import { useState } from "react";
+import { BrokerConnect } from "@/components/BrokerConnect";
 
 const navItems = [
   { path: "/ideas", label: "Ideas", icon: Lightbulb },
@@ -69,6 +71,15 @@ export function Navbar() {
 
           {/* Auth Buttons */}
           <div className="hidden md:flex items-center gap-3">
+            <BrokerConnect 
+              variant="compact"
+              trigger={
+                <Button variant="outline" size="sm" className="gap-2">
+                  <Link2 className="w-4 h-4" />
+                  Connect Broker
+                </Button>
+              }
+            />
             <Button variant="ghost" size="sm">Sign In</Button>
             <Button variant="hero" size="sm">Get Started</Button>
           </div>
