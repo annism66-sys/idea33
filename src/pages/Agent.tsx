@@ -14,6 +14,8 @@ import {
   User,
   Zap
 } from "lucide-react";
+import { useAIChat } from "@/hooks/useAIChat";
+import ReactMarkdown from "react-markdown";
 
 interface Message {
   id: string;
@@ -27,7 +29,7 @@ const initialMessages: Message[] = [
   {
     id: "1",
     role: "assistant",
-    content: "👋 Hello! I'm your AI Investment Agent. I'm here to help you understand your portfolio, explain market movements, and provide personalized investment guidance. How can I assist you today?",
+    content: "👋 Hello! I'm your AI Investment Agent powered by advanced AI. I can help you understand your portfolio, explain market movements, and provide personalized investment guidance for Indian markets. How can I assist you today?",
     timestamp: new Date(),
     suggestions: [
       "Why did my portfolio drop today?",
@@ -38,110 +40,9 @@ const initialMessages: Message[] = [
   }
 ];
 
-const mockResponses: Record<string, { content: string; suggestions?: string[] }> = {
-  "Why did my portfolio drop today?": {
-    content: `📉 **Today's Performance Analysis**
-
-Your portfolio declined by **-0.82%** today, primarily due to:
-
-1. **Banking sector weakness** (-1.4%): RBI's hawkish commentary on inflation spooked banking stocks. HDFCBANK and ICICIBANK, which form 24% of your portfolio, were the main drags.
-
-2. **IT sector pressure** (-0.9%): Concerns about delayed US Fed rate cuts affected IT stocks. Your holdings in TCS and Infosys contributed to the decline.
-
-**Key Insight**: This appears to be a sector-wide rotation rather than company-specific issues. Your fundamentally strong picks should recover as sentiment stabilizes.
-
-**Recommended Action**: No immediate action required. This is normal market volatility within your risk parameters.`,
-    suggestions: [
-      "Should I rebalance my banking exposure?",
-      "What's my portfolio's volatility trend?",
-      "Compare my returns to NIFTY 50"
-    ]
-  },
-  "Analyze my risk exposure": {
-    content: `🎯 **Risk Exposure Analysis**
-
-**Overall Risk Score: 6.2/10** (Moderate)
-
-📊 **Risk Breakdown:**
-
-| Factor | Exposure | Status |
-|--------|----------|--------|
-| Market Beta | 1.12 | ⚠️ Slightly elevated |
-| Sector Concentration | 35% Banking | ⚠️ High |
-| Single Stock Risk | 12.5% (HDFCBANK) | ✅ Acceptable |
-| Liquidity | 98% Large-cap | ✅ Excellent |
-
-**⚠️ Areas of Concern:**
-
-1. **Sector concentration**: 35% in banking sector exposes you to regulatory and rate cycle risks.
-
-2. **Correlation risk**: Banking and IT (60% combined) tend to move together in risk-off scenarios.
-
-**💡 Recommendations:**
-
-- Add defensive sectors (FMCG, Pharma) to reduce beta
-- Consider 5-10% allocation to gold ETF as a hedge
-- Your current position sizing is prudent`,
-    suggestions: [
-      "How can I reduce my banking exposure?",
-      "What defensive stocks do you recommend?",
-      "Show me my portfolio's VaR"
-    ]
-  },
-  "Suggest improvements to my strategy": {
-    content: `💡 **Strategy Improvement Suggestions**
-
-Based on analysis of your current strategies and market conditions:
-
-**1. Banking Momentum Strategy** ✅
-- **Current Performance**: +28.5%
-- **Suggestion**: Tighten stop-loss to 10% from 15% given extended rally
-- **Risk**: Strategy may be over-fitted to recent bull market conditions
-
-**2. IT Value Play** ⚠️
-- **Current Performance**: +12.3%
-- **Suggestion**: Add AI/cloud services exposure (e.g., LTIM, PERSISTENT)
-- **Opportunity**: Sector rotation could favor IT in H2 2025
-
-**3. Dividend Yield Strategy** ✅
-- **Current Performance**: +8.7%
-- **Suggestion**: Continue as-is, provides good downside protection
-
-**4. Small Cap Growth** ⚠️
-- **Current Performance**: -3.2%
-- **Suggestion**: Consider pausing or adding stricter entry criteria
-- **Issue**: Small-cap valuations are stretched
-
-**Overall Recommendation**: 
-Your strategies are well-constructed. Focus on risk management rather than return chasing. Consider adding a momentum filter to your small-cap strategy.`,
-    suggestions: [
-      "Backtest the tighter stop-loss",
-      "Which AI stocks should I consider?",
-      "Pause the small-cap strategy"
-    ]
-  },
-  default: {
-    content: `I understand you're asking about investment-related topics. Let me analyze this for you...
-
-Based on your current portfolio and market conditions, here are my thoughts:
-
-1. **Market Context**: Indian markets are showing mixed signals with sectoral rotation underway
-2. **Your Portfolio**: Currently well-positioned but could benefit from some tactical adjustments
-3. **Key Risks**: Monitor RBI policy decisions and global tech spending trends
-
-Would you like me to dive deeper into any specific aspect of your portfolio or the markets?`,
-    suggestions: [
-      "Analyze my current holdings",
-      "What's the market outlook?",
-      "Review my strategy performance"
-    ]
-  }
-};
-
 export default function Agent() {
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const { messages, isTyping, sendMessage } = useAIChat(initialMessages);
   const [input, setInput] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -155,31 +56,8 @@ export default function Agent() {
   const handleSend = (messageText?: string) => {
     const text = messageText || input;
     if (!text.trim()) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: "user",
-      content: text,
-      timestamp: new Date(),
-    };
-
-    setMessages(prev => [...prev, userMessage]);
+    sendMessage(text);
     setInput("");
-    setIsTyping(true);
-
-    // Simulate AI response
-    setTimeout(() => {
-      const response = mockResponses[text] || mockResponses.default;
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: "assistant",
-        content: response.content,
-        timestamp: new Date(),
-        suggestions: response.suggestions,
-      };
-      setMessages(prev => [...prev, assistantMessage]);
-      setIsTyping(false);
-    }, 1500);
   };
 
   return (
@@ -195,7 +73,7 @@ export default function Agent() {
               </div>
               <div>
                 <h2 className="font-semibold">Investment AI Agent</h2>
-                <p className="text-xs text-muted-foreground">Your personal portfolio analyst</p>
+                <p className="text-xs text-muted-foreground">Powered by Lovable AI</p>
               </div>
               <div className="ml-auto flex items-center gap-2 px-3 py-1 rounded-full bg-gain/10 text-gain text-xs">
                 <div className="w-2 h-2 rounded-full bg-gain animate-pulse" />
@@ -227,13 +105,13 @@ export default function Agent() {
                             : "bg-secondary/50 rounded-bl-md"
                         }`}
                       >
-                        <div className="prose prose-sm dark:prose-invert max-w-none">
-                          {message.content.split('\n').map((line, i) => (
-                            <p key={i} className="mb-2 last:mb-0 text-sm">
-                              {line}
-                            </p>
-                          ))}
-                        </div>
+                        {message.role === "assistant" ? (
+                          <div className="prose prose-sm dark:prose-invert max-w-none prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0.5">
+                            <ReactMarkdown>{message.content}</ReactMarkdown>
+                          </div>
+                        ) : (
+                          <p className="text-sm">{message.content}</p>
+                        )}
                       </div>
                       {message.suggestions && message.suggestions.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-3">
@@ -289,6 +167,7 @@ export default function Agent() {
                   onKeyPress={(e) => e.key === "Enter" && handleSend()}
                   placeholder="Ask about your portfolio, market trends, or investment strategies..."
                   className="flex-1 px-4 py-3 rounded-xl bg-secondary/30 border border-border/50 focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  disabled={isTyping}
                 />
                 <Button
                   variant="hero"
@@ -318,21 +197,24 @@ export default function Agent() {
               <div className="space-y-2">
                 <button
                   onClick={() => handleSend("Why did my portfolio drop today?")}
-                  className="w-full p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 text-left text-sm transition-colors flex items-center gap-2"
+                  disabled={isTyping}
+                  className="w-full p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 text-left text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
                   <TrendingDown className="w-4 h-4 text-loss" />
                   Explain today's drop
                 </button>
                 <button
-                  onClick={() => handleSend("Analyze my risk exposure")}
-                  className="w-full p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 text-left text-sm transition-colors flex items-center gap-2"
+                  onClick={() => handleSend("Analyze my risk exposure in detail")}
+                  disabled={isTyping}
+                  className="w-full p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 text-left text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
                   <AlertTriangle className="w-4 h-4 text-warning" />
                   Risk analysis
                 </button>
                 <button
-                  onClick={() => handleSend("Suggest improvements to my strategy")}
-                  className="w-full p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 text-left text-sm transition-colors flex items-center gap-2"
+                  onClick={() => handleSend("Suggest improvements to my investment strategy")}
+                  disabled={isTyping}
+                  className="w-full p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 text-left text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
                 >
                   <Lightbulb className="w-4 h-4 text-accent" />
                   Get suggestions
