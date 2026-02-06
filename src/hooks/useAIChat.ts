@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Message {
   id: string;
@@ -49,9 +50,9 @@ function getSuggestions(content: string): string[] {
 }
 
 export function useAIChat(initialMessages: Message[]) {
+  const { session } = useAuth();
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isTyping, setIsTyping] = useState(false);
-
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || isTyping) return;
 
@@ -91,11 +92,14 @@ export function useAIChat(initialMessages: Message[]) {
         content: m.content
       }));
 
+      // Use user's session token if available for personalized portfolio context
+      const authToken = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
       const response = await fetch(CHAT_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify({ messages: conversationHistory }),
       });
@@ -174,7 +178,7 @@ export function useAIChat(initialMessages: Message[]) {
     } finally {
       setIsTyping(false);
     }
-  }, [messages, isTyping]);
+  }, [messages, isTyping, session]);
 
   return { messages, isTyping, sendMessage };
 }

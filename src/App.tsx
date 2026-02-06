@@ -9,6 +9,7 @@ import Strategy from "./pages/Strategy";
 import Backtest from "./pages/Backtest";
 import Portfolio from "./pages/Portfolio";
 import Agent from "./pages/Agent";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/ideas" element={<Ideas />} />
           <Route path="/strategy" element={<Strategy />} />
           <Route path="/backtest" element={<Backtest />} />

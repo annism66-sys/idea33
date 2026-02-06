@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { 
@@ -10,10 +10,13 @@ import {
   Bot,
   Menu,
   X,
-  Link2
+  Link2,
+  LogOut,
+  User
 } from "lucide-react";
 import { useState } from "react";
 import { BrokerConnect } from "@/components/BrokerConnect";
+import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
   { path: "/ideas", label: "Ideas", icon: Lightbulb },
@@ -25,8 +28,14 @@ const navItems = [
 
 export function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/30">
       <div className="container mx-auto px-4">
@@ -80,8 +89,27 @@ export function Navbar() {
                 </Button>
               }
             />
-            <Button variant="ghost" size="sm">Sign In</Button>
-            <Button variant="hero" size="sm">Get Started</Button>
+            {user ? (
+              <>
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary/50 text-sm">
+                  <User className="w-4 h-4" />
+                  <span className="max-w-24 truncate">{user.email}</span>
+                </div>
+                <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" onClick={() => navigate("/auth")}>
+                  Sign In
+                </Button>
+                <Button variant="hero" size="sm" onClick={() => navigate("/auth")}>
+                  Get Started
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -122,8 +150,27 @@ export function Navbar() {
               })}
             </nav>
             <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-border/30">
-              <Button variant="ghost" className="w-full justify-start">Sign In</Button>
-              <Button variant="hero" className="w-full">Get Started</Button>
+              {user ? (
+                <>
+                  <div className="flex items-center gap-2 px-4 py-2 text-sm text-muted-foreground">
+                    <User className="w-4 h-4" />
+                    <span className="truncate">{user.email}</span>
+                  </div>
+                  <Button variant="ghost" className="w-full justify-start" onClick={handleSignOut}>
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" className="w-full justify-start" onClick={() => navigate("/auth")}>
+                    Sign In
+                  </Button>
+                  <Button variant="hero" className="w-full" onClick={() => navigate("/auth")}>
+                    Get Started
+                  </Button>
+                </>
+              )}
             </div>
           </motion.div>
         )}
