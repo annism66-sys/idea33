@@ -17,6 +17,9 @@ import {
   Zap,
   ChevronRight
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 
 const brokers = [
   { 
@@ -93,23 +96,109 @@ const brokers = [
   },
 ];
 
+// Mock portfolio data for each broker
+const mockPortfolioData: Record<string, Array<{
+  stock_symbol: string;
+  stock_name: string;
+  quantity: number;
+  average_price: number;
+  current_price: number;
+  sector: string;
+  exchange: string;
+}>> = {
+  zerodha: [
+    { stock_symbol: "RELIANCE", stock_name: "Reliance Industries Ltd", quantity: 25, average_price: 2450, current_price: 2680, sector: "Energy", exchange: "NSE" },
+    { stock_symbol: "TCS", stock_name: "Tata Consultancy Services", quantity: 15, average_price: 3200, current_price: 3580, sector: "IT", exchange: "NSE" },
+    { stock_symbol: "HDFCBANK", stock_name: "HDFC Bank Ltd", quantity: 40, average_price: 1580, current_price: 1720, sector: "Banking", exchange: "NSE" },
+  ],
+  upstox: [
+    { stock_symbol: "INFY", stock_name: "Infosys Ltd", quantity: 30, average_price: 1420, current_price: 1580, sector: "IT", exchange: "NSE" },
+    { stock_symbol: "ICICIBANK", stock_name: "ICICI Bank Ltd", quantity: 50, average_price: 980, current_price: 1120, sector: "Banking", exchange: "NSE" },
+    { stock_symbol: "BHARTIARTL", stock_name: "Bharti Airtel Ltd", quantity: 20, average_price: 1250, current_price: 1380, sector: "Telecom", exchange: "NSE" },
+  ],
+  groww: [
+    { stock_symbol: "WIPRO", stock_name: "Wipro Ltd", quantity: 60, average_price: 420, current_price: 480, sector: "IT", exchange: "NSE" },
+    { stock_symbol: "SBIN", stock_name: "State Bank of India", quantity: 80, average_price: 620, current_price: 750, sector: "Banking", exchange: "NSE" },
+    { stock_symbol: "TATAMOTORS", stock_name: "Tata Motors Ltd", quantity: 35, average_price: 680, current_price: 820, sector: "Automobile", exchange: "NSE" },
+  ],
+  angelone: [
+    { stock_symbol: "MARUTI", stock_name: "Maruti Suzuki India Ltd", quantity: 5, average_price: 10200, current_price: 11500, sector: "Automobile", exchange: "NSE" },
+    { stock_symbol: "BAJFINANCE", stock_name: "Bajaj Finance Ltd", quantity: 12, average_price: 6800, current_price: 7200, sector: "Finance", exchange: "NSE" },
+  ],
+  icici: [
+    { stock_symbol: "AXISBANK", stock_name: "Axis Bank Ltd", quantity: 45, average_price: 1050, current_price: 1180, sector: "Banking", exchange: "NSE" },
+    { stock_symbol: "LT", stock_name: "Larsen & Toubro Ltd", quantity: 18, average_price: 2800, current_price: 3100, sector: "Infrastructure", exchange: "NSE" },
+  ],
+  hdfc: [
+    { stock_symbol: "SUNPHARMA", stock_name: "Sun Pharmaceutical", quantity: 25, average_price: 1120, current_price: 1280, sector: "Pharma", exchange: "NSE" },
+    { stock_symbol: "TITAN", stock_name: "Titan Company Ltd", quantity: 10, average_price: 3200, current_price: 3450, sector: "Consumer", exchange: "NSE" },
+  ],
+  kotak: [
+    { stock_symbol: "KOTAKBANK", stock_name: "Kotak Mahindra Bank", quantity: 22, average_price: 1750, current_price: 1920, sector: "Banking", exchange: "NSE" },
+    { stock_symbol: "ASIANPAINT", stock_name: "Asian Paints Ltd", quantity: 15, average_price: 2900, current_price: 3100, sector: "Consumer", exchange: "NSE" },
+  ],
+  paytm: [
+    { stock_symbol: "ZOMATO", stock_name: "Zomato Ltd", quantity: 100, average_price: 120, current_price: 180, sector: "Consumer", exchange: "NSE" },
+    { stock_symbol: "PAYTM", stock_name: "One 97 Communications", quantity: 50, average_price: 650, current_price: 580, sector: "Fintech", exchange: "NSE" },
+  ],
+};
+
 interface BrokerConnectProps {
   trigger?: React.ReactNode;
   variant?: "default" | "hero" | "compact";
+  onConnect?: () => void;
 }
 
-export function BrokerConnect({ trigger, variant = "default" }: BrokerConnectProps) {
+export function BrokerConnect({ trigger, variant = "default", onConnect }: BrokerConnectProps) {
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [connecting, setConnecting] = useState<string | null>(null);
   const [connected, setConnected] = useState<string[]>([]);
 
-  const handleConnect = (brokerId: string) => {
+  const handleConnect = async (brokerId: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please sign in to connect your broker account.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setConnecting(brokerId);
-    // Simulate connection process
-    setTimeout(() => {
+    
+    try {
+      // Get mock portfolio data for this broker
+      const portfolioData = mockPortfolioData[brokerId] || mockPortfolioData.zerodha;
+      
+      // Insert holdings into database
+      const holdingsToInsert = portfolioData.map(h => ({
+        ...h,
+        user_id: user.id,
+        broker_source: brokerId,
+      }));
+
+      const { error } = await supabase
+        .from("portfolio_holdings")
+        .insert(holdingsToInsert);
+
+      if (error) throw error;
+
       setConnected(prev => [...prev, brokerId]);
+      toast({
+        title: "Broker connected!",
+        description: `Successfully imported ${portfolioData.length} holdings from ${brokers.find(b => b.id === brokerId)?.name}.`,
+      });
+      onConnect?.();
+    } catch (error: any) {
+      toast({
+        title: "Connection failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
       setConnecting(null);
-    }, 1500);
+    }
   };
 
   const defaultTrigger = variant === "hero" ? (
