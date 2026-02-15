@@ -29,6 +29,8 @@ import {
 import { usePortfolio } from "@/hooks/usePortfolio";
 import { useStockPrices } from "@/hooks/useStockPrices";
 import { useAuth } from "@/hooks/useAuth";
+import { RebalancingSuggestions } from "@/components/portfolio/RebalancingSuggestions";
+import { NewsRiskAlerts } from "@/components/portfolio/NewsRiskAlerts";
 import { BrokerConnect } from "@/components/BrokerConnect";
 import { formatDistanceToNow } from "date-fns";
 
@@ -348,6 +350,12 @@ export default function Portfolio() {
                   ))}
                 </div>
               </motion.div>
+            </div>
+
+            {/* Rebalancing & News Alerts */}
+            <div className="grid lg:grid-cols-2 gap-6 mb-8">
+              <RebalancingSuggestions holdings={holdings} totalValue={totalValue} />
+              <NewsRiskAlerts holdings={holdings} />
             </div>
 
             {/* Holdings List */}
