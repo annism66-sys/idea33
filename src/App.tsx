@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Ideas from "./pages/Ideas";
 import Strategy from "./pages/Strategy";
+import RiskBudget from "./pages/RiskBudget";
 import Backtest from "./pages/Backtest";
 import Portfolio from "./pages/Portfolio";
 import Agent from "./pages/Agent";
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/ideas" element={<Ideas />} />
           <Route path="/strategy" element={<Strategy />} />
+          <Route path="/risk-budget" element={<RiskBudget />} />
           <Route path="/backtest" element={<Backtest />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/agent" element={<Agent />} />

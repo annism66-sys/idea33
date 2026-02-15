@@ -12,7 +12,8 @@ import {
   X,
   Link2,
   LogOut,
-  User
+  User,
+  Shield
 } from "lucide-react";
 import { useState } from "react";
 import { BrokerConnect } from "@/components/BrokerConnect";
@@ -21,6 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 const navItems = [
   { path: "/ideas", label: "Ideas", icon: Lightbulb },
   { path: "/strategy", label: "Strategy", icon: FlaskConical },
+  { path: "/risk-budget", label: "Risk", icon: Shield },
   { path: "/backtest", label: "Backtest", icon: BarChart3 },
   { path: "/portfolio", label: "Portfolio", icon: PieChart },
   { path: "/agent", label: "AI Agent", icon: Bot },
