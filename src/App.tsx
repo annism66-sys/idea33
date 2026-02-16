@@ -8,6 +8,7 @@ import Ideas from "./pages/Ideas";
 import Strategy from "./pages/Strategy";
 import RiskBudget from "./pages/RiskBudget";
 import Backtest from "./pages/Backtest";
+import ExecutionFeasibility from "./pages/ExecutionFeasibility";
 import Portfolio from "./pages/Portfolio";
 import Agent from "./pages/Agent";
 import Auth from "./pages/Auth";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/strategy" element={<Strategy />} />
           <Route path="/risk-budget" element={<RiskBudget />} />
           <Route path="/backtest" element={<Backtest />} />
+          <Route path="/execution-feasibility" element={<ExecutionFeasibility />} />
           <Route path="/portfolio" element={<Portfolio />} />
           <Route path="/agent" element={<Agent />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

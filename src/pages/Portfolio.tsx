@@ -31,6 +31,10 @@ import { useStockPrices } from "@/hooks/useStockPrices";
 import { useAuth } from "@/hooks/useAuth";
 import { RebalancingSuggestions } from "@/components/portfolio/RebalancingSuggestions";
 import { NewsRiskAlerts } from "@/components/portfolio/NewsRiskAlerts";
+import { PortfolioPerformanceChart } from "@/components/portfolio/PortfolioPerformanceChart";
+import { PortfolioAdvancedCharts } from "@/components/portfolio/PortfolioAdvancedCharts";
+import { IntelligentRebalancing } from "@/components/portfolio/IntelligentRebalancing";
+import { ContinuousMonitoring } from "@/components/portfolio/ContinuousMonitoring";
 import { BrokerConnect } from "@/components/BrokerConnect";
 import { formatDistanceToNow } from "date-fns";
 
@@ -352,10 +356,28 @@ export default function Portfolio() {
               </motion.div>
             </div>
 
+            {/* Portfolio Performance Chart */}
+            <div className="mb-8">
+              <PortfolioPerformanceChart />
+            </div>
+
+            {/* Advanced Charts */}
+            <PortfolioAdvancedCharts holdings={holdings} totalValue={totalValue} />
+
             {/* Rebalancing & News Alerts */}
             <div className="grid lg:grid-cols-2 gap-6 mb-8">
               <RebalancingSuggestions holdings={holdings} totalValue={totalValue} />
               <NewsRiskAlerts holdings={holdings} />
+            </div>
+
+            {/* Intelligent Rebalancing Engine */}
+            <div className="mb-8">
+              <IntelligentRebalancing holdings={holdings} totalValue={totalValue} />
+            </div>
+
+            {/* Continuous Monitoring Engine */}
+            <div className="mb-8">
+              <ContinuousMonitoring holdings={holdings} totalValue={totalValue} />
             </div>
 
             {/* Holdings List */}
