@@ -91,17 +91,30 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Get the user's JWT from the authorization header
+    // Authenticate user
     const authHeader = req.headers.get("authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     let portfolio: any[] | null = null;
     let profile: any | null = null;
 
-    if (authHeader && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
       try {
-        // Create a client with the user's JWT to get their user ID
         const userClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
         const token = authHeader.replace("Bearer ", "");
-        const { data: { user } } = await userClient.auth.getUser(token);
+        const { data: { user }, error: authError } = await userClient.auth.getUser(token);
+
+        if (authError || !user) {
+          return new Response(JSON.stringify({ error: "Invalid token" }), {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
 
         if (user) {
           // Fetch user's portfolio using service role (bypasses RLS for AI context)
