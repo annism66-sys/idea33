@@ -28,21 +28,17 @@ serve(async (req) => {
       });
     }
 
-    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
-    const supabaseClient = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
+    const serviceClient = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
     const token = authHeader.replace("Bearer ", "");
-    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
-    if (claimsError || !claimsData?.claims) {
+    const { data: { user }, error: authError } = await serviceClient.auth.getUser(token);
+    if (authError || !user) {
       return new Response(JSON.stringify({ error: "Invalid token" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const userId = claimsData.claims.sub;
+    const userId = user.id;
 
     let portfolioContext = "";
     try {
@@ -151,6 +147,17 @@ Return ONLY a JSON array of 3 objects. No explanation, no markdown.`;
       // Remove markdown code blocks if present
       if (cleanContent.startsWith("```")) {
         cleanContent = cleanContent.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+      }
+      // Extract just the JSON array using bracket matching
+      const firstBracket = cleanContent.indexOf("[");
+      if (firstBracket !== -1) {
+        let depth = 0;
+        let lastBracket = -1;
+        for (let i = firstBracket; i < cleanContent.length; i++) {
+          if (cleanContent[i] === "[") depth++;
+          else if (cleanContent[i] === "]") { depth--; if (depth === 0) { lastBracket = i; break; } }
+        }
+        if (lastBracket !== -1) cleanContent = cleanContent.substring(firstBracket, lastBracket + 1);
       }
       ideas = JSON.parse(cleanContent);
     } catch (parseError) {
