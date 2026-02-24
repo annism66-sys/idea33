@@ -22,6 +22,8 @@ export function useAuth() {
       .then(({ data: { session }, error }) => {
         if (error) {
           console.warn("Session retrieval failed, clearing state:", error.message);
+          // Clear corrupted/stale session from localStorage to stop retry loops
+          supabase.auth.signOut().catch(() => {});
           setSession(null);
           setUser(null);
         } else {
@@ -32,6 +34,8 @@ export function useAuth() {
       })
       .catch((err) => {
         console.warn("Auth getSession error:", err);
+        // Clear corrupted/stale session from localStorage to stop retry loops
+        supabase.auth.signOut().catch(() => {});
         setSession(null);
         setUser(null);
         setLoading(false);
