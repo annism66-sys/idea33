@@ -19,14 +19,27 @@ serve(async (req) => {
 
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // Get user portfolio context if authenticated
-    let portfolioContext = "";
+    // Authenticate user
     const authHeader = req.headers.get("authorization");
-    if (authHeader && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Authentication required" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    let portfolioContext = "";
+    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
       try {
         const client = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
         const token = authHeader.replace("Bearer ", "");
-        const { data: { user } } = await client.auth.getUser(token);
+        const { data: { user }, error: authError } = await client.auth.getUser(token);
+        if (authError || !user) {
+          return new Response(JSON.stringify({ error: "Invalid token" }), {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
         if (user) {
           const { data: holdings } = await client
             .from("portfolio_holdings")
