@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -21,37 +21,41 @@ serve(async (req) => {
 
     // Authenticate user
     const authHeader = req.headers.get("authorization");
-    if (!authHeader) {
+    if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Authentication required" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
+    const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseClient = createClient(SUPABASE_URL!, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    if (claimsError || !claimsData?.claims) {
+      return new Response(JSON.stringify({ error: "Invalid token" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const userId = claimsData.claims.sub;
+
     let portfolioContext = "";
-    if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
-      try {
-        const client = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-        const token = authHeader.replace("Bearer ", "");
-        const { data: { user }, error: authError } = await client.auth.getUser(token);
-        if (authError || !user) {
-          return new Response(JSON.stringify({ error: "Invalid token" }), {
-            status: 401,
-            headers: { ...corsHeaders, "Content-Type": "application/json" },
-          });
-        }
-        if (user) {
-          const { data: holdings } = await client
-            .from("portfolio_holdings")
-            .select("stock_symbol, stock_name, sector, quantity, average_price, current_price")
-            .eq("user_id", user.id);
-          if (holdings && holdings.length > 0) {
-            portfolioContext = `\n\nUser's current holdings: ${holdings.map(h => `${h.stock_symbol} (${h.sector || 'Unknown'})`).join(', ')}. Avoid suggesting stocks they already hold heavily. Consider complementary positions.`;
-          }
-        }
-      } catch (e) {
-        console.error("Error fetching portfolio:", e);
+    try {
+      const serviceClient = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+      const { data: holdings } = await serviceClient
+        .from("portfolio_holdings")
+        .select("stock_symbol, stock_name, sector, quantity, average_price, current_price")
+        .eq("user_id", userId);
+      if (holdings && holdings.length > 0) {
+        portfolioContext = `\n\nUser's current holdings: ${holdings.map(h => `${h.stock_symbol} (${h.sector || 'Unknown'})`).join(', ')}. Avoid suggesting stocks they already hold heavily. Consider complementary positions.`;
       }
+    } catch (e) {
+      console.error("Error fetching portfolio:", e);
     }
 
     const systemPrompt = `You are an expert Indian equity market analyst. Generate investment ideas based on user preferences. You must respond ONLY with a valid JSON array (no markdown, no code blocks).
