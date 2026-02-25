@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-
 
 interface Message {
   id: string;
@@ -52,6 +52,7 @@ function getSuggestions(content: string): string[] {
 export function useAIChat(initialMessages: Message[]) {
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [isTyping, setIsTyping] = useState(false);
+
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || isTyping) return;
 
@@ -91,7 +92,9 @@ export function useAIChat(initialMessages: Message[]) {
         content: m.content
       }));
 
-      const authToken = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+      // Get the current session token for authenticated requests
+      const { data: { session } } = await supabase.auth.getSession();
+      const authToken = session?.access_token || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
       const response = await fetch(CHAT_URL, {
         method: "POST",
@@ -165,7 +168,6 @@ export function useAIChat(initialMessages: Message[]) {
         description: error instanceof Error ? error.message : "Failed to get AI response",
         variant: "destructive",
       });
-      // Remove the failed assistant message if it was started
       setMessages(prev => {
         const last = prev[prev.length - 1];
         if (last?.role === "assistant" && !last.content) {
