@@ -11,9 +11,7 @@ import Backtest from "./pages/Backtest";
 import ExecutionFeasibility from "./pages/ExecutionFeasibility";
 import Portfolio from "./pages/Portfolio";
 import Agent from "./pages/Agent";
-import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
-import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -25,14 +23,13 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/ideas" element={<ProtectedRoute><Ideas /></ProtectedRoute>} />
-          <Route path="/strategy" element={<ProtectedRoute><Strategy /></ProtectedRoute>} />
-          <Route path="/risk-budget" element={<ProtectedRoute><RiskBudget /></ProtectedRoute>} />
-          <Route path="/backtest" element={<ProtectedRoute><Backtest /></ProtectedRoute>} />
-          <Route path="/execution-feasibility" element={<ProtectedRoute><ExecutionFeasibility /></ProtectedRoute>} />
-          <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
-          <Route path="/agent" element={<ProtectedRoute><Agent /></ProtectedRoute>} />
+          <Route path="/ideas" element={<Ideas />} />
+          <Route path="/strategy" element={<Strategy />} />
+          <Route path="/risk-budget" element={<RiskBudget />} />
+          <Route path="/backtest" element={<Backtest />} />
+          <Route path="/execution-feasibility" element={<ExecutionFeasibility />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/agent" element={<Agent />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

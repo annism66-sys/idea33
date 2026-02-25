@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "./useAuth";
+
 import { toast } from "@/hooks/use-toast";
 
 export interface Holding {
@@ -17,17 +17,10 @@ export interface Holding {
 }
 
 export function usePortfolio() {
-  const { user } = useAuth();
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchHoldings = async () => {
-    if (!user) {
-      setHoldings([]);
-      setLoading(false);
-      return;
-    }
-
     try {
       const { data, error } = await supabase
         .from("portfolio_holdings")
@@ -49,15 +42,13 @@ export function usePortfolio() {
 
   useEffect(() => {
     fetchHoldings();
-  }, [user]);
+  }, []);
 
   const addHolding = async (holding: Omit<Holding, "id" | "created_at">) => {
-    if (!user) return null;
-
     try {
       const { data, error } = await supabase
         .from("portfolio_holdings")
-        .insert([{ ...holding, user_id: user.id }])
+        .insert([{ ...holding, user_id: "anonymous" }])
         .select()
         .single();
 

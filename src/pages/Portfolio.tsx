@@ -28,7 +28,7 @@ import {
 } from "recharts";
 import { usePortfolio } from "@/hooks/usePortfolio";
 import { useStockPrices } from "@/hooks/useStockPrices";
-import { useAuth } from "@/hooks/useAuth";
+
 import { RebalancingSuggestions } from "@/components/portfolio/RebalancingSuggestions";
 import { NewsRiskAlerts } from "@/components/portfolio/NewsRiskAlerts";
 import { PortfolioPerformanceChart } from "@/components/portfolio/PortfolioPerformanceChart";
@@ -61,7 +61,6 @@ const riskBreakdown = [
 ];
 
 export default function Portfolio() {
-  const { user, loading: authLoading } = useAuth();
   const { holdings, loading: holdingsLoading, totalValue, totalInvested, totalPnL, totalPnLPercent, refetch } = usePortfolio();
   const { refreshPrices, updating, lastUpdated } = useStockPrices();
 
@@ -110,7 +109,7 @@ export default function Portfolio() {
     return `₹${value.toLocaleString("en-IN")}`;
   };
 
-  const isLoading = authLoading || holdingsLoading;
+  const isLoading = holdingsLoading;
 
   return (
     <DashboardLayout>
@@ -124,25 +123,23 @@ export default function Portfolio() {
           <div>
             <h1 className="text-3xl font-bold mb-2">Portfolio Analytics</h1>
             <p className="text-muted-foreground">
-              {user ? "Real-time portfolio overview and risk analysis" : "Sign in to view your portfolio"}
+              Real-time portfolio overview and risk analysis
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {user && (
-              <Button 
-                variant="outline" 
-                onClick={handleRefreshPrices}
-                disabled={updating || holdings.length === 0}
-                className="gap-2"
-              >
-                {updating ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <RefreshCw className="w-4 h-4" />
-                )}
-                Refresh Prices
-              </Button>
-            )}
+            <Button 
+              variant="outline" 
+              onClick={handleRefreshPrices}
+              disabled={updating || holdings.length === 0}
+              className="gap-2"
+            >
+              {updating ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4" />
+              )}
+              Refresh Prices
+            </Button>
             <BrokerConnect 
               variant="default" 
               onConnect={refetch}
