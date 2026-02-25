@@ -17,26 +17,10 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
 
-  // On mount, clear any stale/corrupted session to prevent "Failed to fetch"
   useEffect(() => {
-    const clearStaleSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          // Already logged in, redirect
-          navigate("/portfolio");
-        }
-      } catch {
-        // Session is corrupted — force sign out and clear storage
-        console.warn("Clearing corrupted session on auth page");
-        try {
-          const storageKey = `sb-${import.meta.env.VITE_SUPABASE_PROJECT_ID}-auth-token`;
-          localStorage.removeItem(storageKey);
-        } catch {}
-        await supabase.auth.signOut().catch(() => {});
-      }
-    };
-    clearStaleSession();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) navigate("/portfolio");
+    });
   }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
