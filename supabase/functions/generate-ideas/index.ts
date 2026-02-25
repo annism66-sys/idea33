@@ -19,36 +19,16 @@ serve(async (req) => {
 
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // Authenticate user
-    const authHeader = req.headers.get("authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return new Response(JSON.stringify({ error: "Authentication required" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
     const serviceClient = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user }, error: authError } = await serviceClient.auth.getUser(token);
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: "Invalid token" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-
-    const userId = user.id;
 
     let portfolioContext = "";
     try {
-      const serviceClient = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
       const { data: holdings } = await serviceClient
         .from("portfolio_holdings")
         .select("stock_symbol, stock_name, sector, quantity, average_price, current_price")
-        .eq("user_id", userId);
+        .limit(50);
       if (holdings && holdings.length > 0) {
-        portfolioContext = `\n\nUser's current holdings: ${holdings.map(h => `${h.stock_symbol} (${h.sector || 'Unknown'})`).join(', ')}. Avoid suggesting stocks they already hold heavily. Consider complementary positions.`;
+        portfolioContext = `\n\nCurrent holdings: ${holdings.map(h => `${h.stock_symbol} (${h.sector || 'Unknown'})`).join(', ')}. Avoid suggesting stocks already held heavily. Consider complementary positions.`;
       }
     } catch (e) {
       console.error("Error fetching portfolio:", e);
