@@ -18,7 +18,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+
 import { toast } from "@/hooks/use-toast";
 
 const brokers = [
@@ -150,21 +150,11 @@ interface BrokerConnectProps {
 }
 
 export function BrokerConnect({ trigger, variant = "default", onConnect }: BrokerConnectProps) {
-  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [connecting, setConnecting] = useState<string | null>(null);
   const [connected, setConnected] = useState<string[]>([]);
 
   const handleConnect = async (brokerId: string) => {
-    if (!user) {
-      toast({
-        title: "Authentication required",
-        description: "Please sign in to connect your broker account.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setConnecting(brokerId);
     
     try {
@@ -174,7 +164,7 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
       // Insert holdings into database
       const holdingsToInsert = portfolioData.map(h => ({
         ...h,
-        user_id: user.id,
+        user_id: "anonymous",
         broker_source: brokerId,
       }));
 
