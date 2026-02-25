@@ -93,7 +93,7 @@ serve(async (req) => {
 
     // Authenticate user
     const authHeader = req.headers.get("authorization");
-    if (!authHeader) {
+    if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Authentication required" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -105,37 +105,36 @@ serve(async (req) => {
 
     if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
       try {
-        const userClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+        const serviceClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
         const token = authHeader.replace("Bearer ", "");
-        const { data: { user }, error: authError } = await userClient.auth.getUser(token);
+        const { data, error: claimsError } = await serviceClient.auth.getUser(token);
 
-        if (authError || !user) {
-          return new Response(JSON.stringify({ error: "Invalid token" }), {
+        if (claimsError || !data?.user) {
+          return new Response(JSON.stringify({ error: "Invalid or expired token. Please sign in again." }), {
             status: 401,
             headers: { ...corsHeaders, "Content-Type": "application/json" },
           });
         }
 
-        if (user) {
-          // Fetch user's portfolio using service role (bypasses RLS for AI context)
-          const { data: holdings } = await userClient
-            .from("portfolio_holdings")
-            .select("*")
-            .eq("user_id", user.id)
-            .order("created_at", { ascending: false });
+        const userId = data.user.id;
 
-          const { data: profileData } = await userClient
-            .from("profiles")
-            .select("*")
-            .eq("user_id", user.id)
-            .single();
+        // Fetch user's portfolio using service role (bypasses RLS for AI context)
+        const { data: holdings } = await serviceClient
+          .from("portfolio_holdings")
+          .select("*")
+          .eq("user_id", userId)
+          .order("created_at", { ascending: false });
 
-          portfolio = holdings;
-          profile = profileData;
-        }
+        const { data: profileData } = await serviceClient
+          .from("profiles")
+          .select("*")
+          .eq("user_id", userId)
+          .single();
+
+        portfolio = holdings;
+        profile = profileData;
       } catch (e) {
         console.error("Error fetching portfolio:", e);
-        // Continue without portfolio data
       }
     }
 

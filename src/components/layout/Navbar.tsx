@@ -12,9 +12,12 @@ import {
   X,
   Link2,
   Shield,
+  LogOut,
+  User,
 } from "lucide-react";
 import { useState } from "react";
 import { BrokerConnect } from "@/components/BrokerConnect";
+import { useAuth } from "@/hooks/useAuth";
 
 const navItems = [
   { path: "/ideas", label: "Ideas", icon: Lightbulb },
@@ -28,6 +31,9 @@ const navItems = [
 export function Navbar() {
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, loading, signOut } = useAuth();
+
+  const displayName = user?.user_metadata?.display_name || user?.email?.split("@")[0] || "User";
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass-card border-b border-border/30">
@@ -73,15 +79,30 @@ export function Navbar() {
 
           {/* Actions */}
           <div className="hidden md:flex items-center gap-3">
-            <BrokerConnect 
-              variant="compact"
-              trigger={
-                <Button variant="outline" size="sm" className="gap-2">
-                  <Link2 className="w-4 h-4" />
-                  Connect Broker
+            {!loading && user ? (
+              <>
+                <BrokerConnect 
+                  variant="compact"
+                  trigger={
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Link2 className="w-4 h-4" />
+                      Connect Broker
+                    </Button>
+                  }
+                />
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary/50 text-sm">
+                  <User className="w-4 h-4 text-muted-foreground" />
+                  <span className="font-medium truncate max-w-[120px]">{displayName}</span>
+                </div>
+                <Button variant="ghost" size="sm" onClick={signOut} className="gap-2">
+                  <LogOut className="w-4 h-4" />
                 </Button>
-              }
-            />
+              </>
+            ) : !loading ? (
+              <Link to="/auth">
+                <Button variant="hero" size="sm">Sign In</Button>
+              </Link>
+            ) : null}
           </div>
 
           {/* Mobile Menu Button */}
@@ -120,6 +141,24 @@ export function Navbar() {
                   </Link>
                 );
               })}
+              {!loading && user ? (
+                <button
+                  onClick={() => { signOut(); setMobileMenuOpen(false); }}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Sign Out
+                </button>
+              ) : !loading ? (
+                <Link
+                  to="/auth"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary hover:bg-primary/10 transition-colors"
+                >
+                  <User className="w-5 h-5" />
+                  Sign In
+                </Link>
+              ) : null}
             </nav>
           </motion.div>
         )}
