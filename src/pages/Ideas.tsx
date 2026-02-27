@@ -11,15 +11,15 @@ import { Sparkles, Loader2 } from "lucide-react";
 
 export default function Ideas() {
   const navigate = useNavigate();
-  const { setConvertedIdea, setFlowStep } = useStrategyStore();
+  const { setConvertedIdea, setFlowStep, generatedIdeas, setGeneratedIdeas } = useStrategyStore();
 
   const [selectedRisk, setSelectedRisk] = useState<string>("Moderate");
   const [selectedHorizon, setSelectedHorizon] = useState<string>("Medium-term (6-12 months)");
   const [selectedStyles, setSelectedStyles] = useState<string[]>(["Momentum", "Value"]);
   const [selectedSectors, setSelectedSectors] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [ideas, setIdeas] = useState<InvestmentIdea[]>([]);
-  const [hasGenerated, setHasGenerated] = useState(false);
+  const [ideas, setIdeas] = useState<InvestmentIdea[]>(generatedIdeas);
+  const [hasGenerated, setHasGenerated] = useState(generatedIdeas.length > 0);
 
   const handleGenerateIdeas = async () => {
     setIsGenerating(true);
@@ -37,8 +37,8 @@ export default function Ideas() {
       if (data?.error) throw new Error(data.error);
 
       setIdeas(data.ideas || []);
+      setGeneratedIdeas(data.ideas || []);
       setHasGenerated(true);
-      toast({ title: "Ideas Generated", description: `${data.ideas?.length || 0} AI-powered investment ideas ready` });
     } catch (error: any) {
       console.error("Error generating ideas:", error);
       toast({
