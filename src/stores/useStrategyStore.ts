@@ -49,6 +49,10 @@ interface StrategyStore {
   // Ideas
   convertedIdea: InvestmentIdea | null;
   setConvertedIdea: (idea: InvestmentIdea | null) => void;
+  
+  // Generated ideas list (persisted across navigation)
+  generatedIdeas: InvestmentIdea[];
+  setGeneratedIdeas: (ideas: InvestmentIdea[]) => void;
 
   // Active strategy
   activeStrategy: Strategy | null;
@@ -61,11 +65,18 @@ interface StrategyStore {
   // Flow state
   flowStep: "strategy" | "risk" | "backtest";
   setFlowStep: (step: "strategy" | "risk" | "backtest") => void;
+  
+  // Custom backtest stocks
+  backtestStocks: string[];
+  setBacktestStocks: (stocks: string[]) => void;
 }
 
 export const useStrategyStore = create<StrategyStore>((set) => ({
   convertedIdea: null,
   setConvertedIdea: (idea) => set({ convertedIdea: idea }),
+
+  generatedIdeas: [],
+  setGeneratedIdeas: (ideas) => set({ generatedIdeas: ideas }),
 
   activeStrategy: null,
   setActiveStrategy: (strategy) => set({ activeStrategy: strategy }),
@@ -84,4 +95,7 @@ export const useStrategyStore = create<StrategyStore>((set) => ({
 
   flowStep: "strategy",
   setFlowStep: (step) => set({ flowStep: step }),
+
+  backtestStocks: [],
+  setBacktestStocks: (stocks) => set({ backtestStocks: stocks }),
 }));

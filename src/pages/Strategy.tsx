@@ -12,6 +12,7 @@ import {
   Shield, ArrowRight, Info, Star, AlertTriangle, Package
 } from "lucide-react";
 import { useStrategyStore, StrategyStock } from "@/stores/useStrategyStore";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
 
 interface Rule {
@@ -78,7 +79,7 @@ const rebalancingOptions = ["Weekly", "Monthly", "Quarterly", "Semi-Annually", "
 
 export default function Strategy() {
   const navigate = useNavigate();
-  const { convertedIdea, setConvertedIdea, setActiveStrategy, setFlowStep } = useStrategyStore();
+  const { convertedIdea, setConvertedIdea, setActiveStrategy, setFlowStep, backtestStocks, setBacktestStocks } = useStrategyStore();
 
   const [strategyInput, setStrategyInput] = useState(
     "I want to buy large-cap Indian stocks that are showing momentum with strong fundamentals. Enter when RSI is oversold and price is above the 200-day moving average. Exit when RSI becomes overbought or if the stock drops more than 15%. Limit each position to 10% of the portfolio with a maximum of 5 stocks."
@@ -93,6 +94,7 @@ export default function Strategy() {
   const [rebalancingFreq, setRebalancingFreq] = useState("Monthly");
   const [strategyName, setStrategyName] = useState("");
   const [sourceTemplate, setSourceTemplate] = useState<string | null>(null);
+  const [customStockInput, setCustomStockInput] = useState("");
 
   // Import from converted idea
   useEffect(() => {
@@ -169,6 +171,19 @@ export default function Strategy() {
 
   const removeStock = (index: number) => {
     setStrategyStocks(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const addCustomStock = () => {
+    const symbol = customStockInput.trim().toUpperCase();
+    if (!symbol) return;
+    if (strategyStocks.some(s => s.symbol === symbol)) {
+      toast({ title: "Stock already added", description: `${symbol} is already in the allocation`, variant: "destructive" });
+      return;
+    }
+    const newWeight = Math.max(1, Math.floor(100 / (strategyStocks.length + 1)));
+    setStrategyStocks(prev => [...prev, { symbol, weight: newWeight }]);
+    setCustomStockInput("");
+    toast({ title: "Stock Added", description: `${symbol} added to strategy` });
   };
 
   const totalWeight = strategyStocks.reduce((sum, s) => sum + s.weight, 0);
@@ -289,6 +304,41 @@ export default function Strategy() {
                 </div>
               </div>
             )}
+
+            {/* Add Custom Stocks */}
+            <div className="glass-card-elevated p-6 rounded-2xl">
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <Plus className="w-4 h-4 text-primary" />
+                Add Stocks for Backtesting
+              </h3>
+              <p className="text-xs text-muted-foreground mb-3">
+                Enter NSE stock symbols to include in your strategy and backtest
+              </p>
+              <div className="flex gap-2 mb-3">
+                <Input
+                  value={customStockInput}
+                  onChange={(e) => setCustomStockInput(e.target.value.toUpperCase())}
+                  placeholder="e.g. RELIANCE, TCS, INFY"
+                  className="font-mono text-sm"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") addCustomStock();
+                  }}
+                />
+                <Button variant="outline" size="sm" onClick={addCustomStock} className="shrink-0">
+                  <Plus className="w-4 h-4 mr-1" /> Add
+                </Button>
+              </div>
+              {strategyStocks.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {strategyStocks.map((s, idx) => (
+                    <Badge key={s.symbol} variant="secondary" className="font-mono text-xs gap-1 cursor-pointer hover:bg-loss/20 transition-colors" onClick={() => removeStock(idx)}>
+                      {s.symbol}
+                      <Trash2 className="w-3 h-3" />
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Strategy Config */}
             <div className="glass-card-elevated p-6 rounded-2xl">
