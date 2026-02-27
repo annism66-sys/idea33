@@ -79,17 +79,17 @@ export function Navbar() {
 
           {/* Actions */}
           <div className="hidden md:flex items-center gap-3">
+            <BrokerConnect 
+              variant="compact"
+              trigger={
+                <Button variant="outline" size="sm" className="gap-2 rounded-full">
+                  <Link2 className="w-4 h-4" />
+                  Connect Broker
+                </Button>
+              }
+            />
             {!loading && user ? (
               <>
-                <BrokerConnect 
-                  variant="compact"
-                  trigger={
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Link2 className="w-4 h-4" />
-                      Connect Broker
-                    </Button>
-                  }
-                />
                 <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary/50 text-sm">
                   <User className="w-4 h-4 text-muted-foreground" />
                   <span className="font-medium truncate max-w-[120px]">{displayName}</span>
@@ -99,9 +99,14 @@ export function Navbar() {
                 </Button>
               </>
             ) : !loading ? (
-              <Link to="/auth">
-                <Button variant="hero" size="sm">Sign In</Button>
-              </Link>
+              <>
+                <Link to="/auth">
+                  <Button variant="ghost" size="sm" className="text-foreground font-medium">Sign In</Button>
+                </Link>
+                <Link to="/auth">
+                  <Button size="sm" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-5">Get Started</Button>
+                </Link>
+              </>
             ) : null}
           </div>
 
