@@ -15,6 +15,7 @@ import {
   LogOut,
   User,
   Crown,
+  Gauge,
 } from "lucide-react";
 import { useState } from "react";
 import { BrokerConnect } from "@/components/BrokerConnect";
@@ -25,6 +26,7 @@ const navItems = [
   { path: "/strategy", label: "Strategy", icon: FlaskConical },
   { path: "/risk-budget", label: "Risk", icon: Shield },
   { path: "/backtest", label: "Backtest", icon: BarChart3 },
+  { path: "/options-intelligence", label: "Options", icon: Gauge },
   { path: "/portfolio", label: "Portfolio", icon: PieChart },
   { path: "/agent", label: "AI Agent", icon: Bot },
   { path: "/plans", label: "Plans", icon: Crown },

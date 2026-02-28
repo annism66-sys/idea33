@@ -15,6 +15,7 @@ import Portfolio from "./pages/Portfolio";
 import Agent from "./pages/Agent";
 import NotFound from "./pages/NotFound";
 import Plans from "./pages/Plans";
+import OptionsIntelligence from "./pages/OptionsIntelligence";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/execution-feasibility" element={<ProtectedRoute><ExecutionFeasibility /></ProtectedRoute>} />
           <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
           <Route path="/agent" element={<ProtectedRoute><Agent /></ProtectedRoute>} />
+          <Route path="/options-intelligence" element={<ProtectedRoute><OptionsIntelligence /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
