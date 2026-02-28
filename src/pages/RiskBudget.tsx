@@ -11,6 +11,12 @@ import {
 } from "lucide-react";
 import { useStrategyStore } from "@/stores/useStrategyStore";
 import { toast } from "@/hooks/use-toast";
+import { RiskHeatMeter } from "@/components/risk/RiskHeatMeter";
+import { DriftIndicator } from "@/components/risk/DriftIndicator";
+import { ExposureRadar } from "@/components/risk/ExposureRadar";
+import { DownsideProbabilityCard } from "@/components/risk/DownsideProbabilityCard";
+import { BehavioralIntelligence } from "@/components/behavioral/BehavioralIntelligence";
+import { UpgradeGate } from "@/components/UpgradeGate";
 
 export default function RiskBudget() {
   const navigate = useNavigate();
@@ -32,7 +38,6 @@ export default function RiskBudget() {
       }
     });
 
-    // Check if any stock group could represent a sector (simplified)
     if (activeStrategy.stocks.length > 0) {
       const maxWeight = Math.max(...activeStrategy.stocks.map((s) => s.weight));
       if (maxWeight > sectorLimit) {
@@ -89,7 +94,7 @@ export default function RiskBudget() {
 
   return (
     <DashboardLayout>
-      <div className="container mx-auto px-4 py-8 max-w-5xl">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-warning/10 border border-warning/20 mb-4">
@@ -242,6 +247,39 @@ export default function RiskBudget() {
             </div>
           </motion.div>
         </div>
+
+        {/* Elite Risk Analytics — Pro tier */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="mt-12"
+        >
+          <h2 className="text-2xl font-bold mb-6 text-center">Advanced Risk Analytics</h2>
+
+          <UpgradeGate requiredPlan="pro" featureName="Advanced Risk Analytics">
+            <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <RiskHeatMeter />
+              <DriftIndicator />
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <ExposureRadar />
+              <DownsideProbabilityCard />
+            </div>
+          </UpgradeGate>
+        </motion.div>
+
+        {/* Behavioral Intelligence Engine — Pro tier */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-12"
+        >
+          <UpgradeGate requiredPlan="pro" featureName="Behavioral Intelligence Engine">
+            <BehavioralIntelligence />
+          </UpgradeGate>
+        </motion.div>
       </div>
     </DashboardLayout>
   );
