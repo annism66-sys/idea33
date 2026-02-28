@@ -14,6 +14,7 @@ import ExecutionFeasibility from "./pages/ExecutionFeasibility";
 import Portfolio from "./pages/Portfolio";
 import Agent from "./pages/Agent";
 import NotFound from "./pages/NotFound";
+import Plans from "./pages/Plans";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/plans" element={<Plans />} />
           <Route path="/ideas" element={<ProtectedRoute><Ideas /></ProtectedRoute>} />
           <Route path="/strategy" element={<ProtectedRoute><Strategy /></ProtectedRoute>} />
           <Route path="/risk-budget" element={<ProtectedRoute><RiskBudget /></ProtectedRoute>} />

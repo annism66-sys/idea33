@@ -14,6 +14,7 @@ import {
   Shield,
   LogOut,
   User,
+  Crown,
 } from "lucide-react";
 import { useState } from "react";
 import { BrokerConnect } from "@/components/BrokerConnect";
@@ -26,6 +27,7 @@ const navItems = [
   { path: "/backtest", label: "Backtest", icon: BarChart3 },
   { path: "/portfolio", label: "Portfolio", icon: PieChart },
   { path: "/agent", label: "AI Agent", icon: Bot },
+  { path: "/plans", label: "Plans", icon: Crown },
 ];
 
 export function Navbar() {
