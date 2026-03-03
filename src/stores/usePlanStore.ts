@@ -44,7 +44,7 @@ export const planDetails = {
   basic: {
     name: "Basic",
     tagline: "For Retail Investors",
-    price: "₹999",
+    price: "Free",
     period: "/month",
     color: "primary" as const,
     description: "Perfect for beginner and intermediate investors starting their intelligent investing journey.",
