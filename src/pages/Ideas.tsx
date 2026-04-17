@@ -129,7 +129,7 @@ export default function Ideas() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Ready to Generate Ideas</h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Set your preferences on the left and click "Generate AI Ideas" to get personalized investment opportunities
+                  Set your preferences on the left and click "Generate Ideas" to get personalized investment opportunities
                 </p>
               </motion.div>
             )}
