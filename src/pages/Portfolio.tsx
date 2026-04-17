@@ -452,14 +452,14 @@ export default function Portfolio() {
                 </table>
               </div>
 
-              {/* AI Insight */}
+              {/* Portfolio Insight */}
               <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
                 <div className="flex items-start gap-3">
                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <Lightbulb className="w-4 h-4 text-primary" />
                   </div>
                   <div>
-                    <div className="text-sm font-medium mb-1">AI Portfolio Insight</div>
+                    <div className="text-sm font-medium mb-1">Smart Portfolio Insight</div>
                     <p className="text-xs text-muted-foreground">
                       Your portfolio has {holdings.length} stocks across {sectorAllocation.length} sectors. 
                       {totalPnLPercent >= 0 
