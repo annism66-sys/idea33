@@ -98,7 +98,7 @@ export default function Auth() {
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
               <TrendingUp className="w-6 h-6 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold">InvestIQ</span>
+            <span className="text-xl font-bold">Arken</span>
           </div>
 
           <h1 className="text-2xl font-bold text-center mb-2">

@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 const benefits = [
   "No coding required",
   "Indian market focused",
-  "AI-powered insights",
+  "Data-driven insights",
   "Risk management built-in",
 ];
 
@@ -27,7 +27,7 @@ export function CTASection() {
             Ready to Transform Your Investment Journey?
           </h2>
           <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">
-            Join thousands of investors using AI to make smarter decisions in the Indian markets.
+            Join thousands of investors using advanced analytics to make smarter decisions in the Indian markets.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 mb-8">

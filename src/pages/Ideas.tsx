@@ -82,9 +82,9 @@ export default function Ideas() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold mb-2">AI Investment Ideas</h1>
+          <h1 className="text-3xl font-bold mb-2">Intelligent Investment Ideas</h1>
           <p className="text-muted-foreground">
-            Discover personalized investment opportunities powered by AI analysis of Indian markets
+            Discover personalized investment opportunities powered by advanced analysis of Indian markets
           </p>
         </motion.div>
 

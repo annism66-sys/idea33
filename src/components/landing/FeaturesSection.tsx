@@ -13,14 +13,14 @@ import { Button } from "@/components/ui/button";
 const features = [
   {
     icon: Brain,
-    title: "AI Idea Generation",
-    description: "Get personalized investment ideas based on your risk profile, market conditions, and investment goals. Our AI analyzes patterns across NSE/BSE to surface opportunities.",
+    title: "Intelligent Idea Generation",
+    description: "Get personalized investment ideas based on your risk profile, market conditions, and investment goals. Our engine analyzes patterns across NSE/BSE to surface opportunities.",
     gradient: "from-primary to-primary/60",
   },
   {
     icon: LineChart,
     title: "Strategy Builder",
-    description: "Convert your investment thesis into rule-based strategies using plain English. Our AI translates your ideas into entry/exit rules, position sizing, and rebalancing logic.",
+    description: "Convert your investment thesis into rule-based strategies using plain English. Our engine translates your ideas into entry/exit rules, position sizing, and rebalancing logic.",
     gradient: "from-accent to-accent/60",
   },
   {
@@ -32,13 +32,13 @@ const features = [
   {
     icon: Wallet,
     title: "Portfolio Analytics",
-    description: "Combine multiple strategies into a cohesive portfolio. Monitor concentration risk, volatility, and get AI-powered explanations of your portfolio dynamics.",
+    description: "Combine multiple strategies into a cohesive portfolio. Monitor concentration risk, volatility, and get data-driven explanations of your portfolio dynamics.",
     gradient: "from-gain to-gain/60",
   },
   {
     icon: Bot,
-    title: "AI Investing Agent",
-    description: "Your personal AI analyst that explains performance changes, flags risks, suggests improvements, and acts as a behavioral guardrail for your investments.",
+    title: "Intelligent Investing Agent",
+    description: "Your personal analyst that explains performance changes, flags risks, suggests improvements, and acts as a behavioral guardrail for your investments.",
     gradient: "from-primary to-accent",
   },
   {
@@ -67,7 +67,7 @@ export function FeaturesSection() {
             <span className="gradient-text"> Intelligently</span>
           </h2>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            A complete suite of AI-powered tools designed for the Indian markets, 
+            A complete suite of intelligent tools designed for the Indian markets, 
             from idea generation to portfolio optimization.
           </p>
         </motion.div>

@@ -90,7 +90,7 @@ export function BehavioralIntelligence() {
         </div>
         <div>
           <h3 className="text-lg font-semibold">Behavioral Intelligence Engine</h3>
-          <p className="text-sm text-muted-foreground">AI-powered trading psychology analysis</p>
+          <p className="text-sm text-muted-foreground">Data-driven trading psychology analysis</p>
         </div>
       </div>
 

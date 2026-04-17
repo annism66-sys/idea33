@@ -234,7 +234,7 @@ export default function Strategy() {
         >
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4">
             <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">AI-Powered Strategy Builder</span>
+            <span className="text-sm font-medium text-primary">Intelligent Strategy Builder</span>
           </div>
           <h1 className="text-4xl font-bold mb-3">Build Your Strategy</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
@@ -255,7 +255,7 @@ export default function Strategy() {
             <div className="flex items-center gap-3">
               <Package className="w-5 h-5 text-primary" />
               <div>
-                <span className="font-medium text-sm">Imported from AI Ideas:</span>
+                <span className="font-medium text-sm">Imported from Ideas:</span>
                 <span className="text-sm text-muted-foreground ml-2">{convertedIdea.title} • {convertedIdea.theme} • {convertedIdea.confidence}% confidence</span>
               </div>
             </div>

@@ -12,11 +12,11 @@ export interface PlanFeature {
 export const planFeatures: PlanFeature[] = [
   { name: "Portfolio Sync (Read-only)", basic: true, pro: true, institutional: true },
   { name: "Core Risk Dashboard", basic: true, pro: true, institutional: true },
-  { name: "AI Idea Generation", basic: true, pro: true, institutional: true },
+  { name: "Intelligent Idea Generation", basic: true, pro: true, institutional: true },
   { name: "Strategy Simulation", basic: true, pro: true, institutional: true },
   { name: "Basic Option Probability", basic: true, pro: true, institutional: true },
   { name: "Limited Behavioral Alerts", basic: true, pro: true, institutional: true },
-  { name: "Standard AI Explanations", basic: true, pro: true, institutional: true },
+  { name: "Standard Explanations", basic: true, pro: true, institutional: true },
   { name: "Live Risk Radar", basic: false, pro: true, institutional: true },
   { name: "Continuous Portfolio Monitoring", basic: false, pro: true, institutional: true },
   { name: "Behavioral Intelligence Engine", basic: false, pro: true, institutional: true },

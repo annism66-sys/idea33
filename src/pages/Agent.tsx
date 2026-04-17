@@ -29,7 +29,7 @@ const initialMessages: Message[] = [
   {
     id: "1",
     role: "assistant",
-    content: "👋 Hello! I'm your AI Investment Agent powered by advanced AI. I can help you understand your portfolio, explain market movements, and provide personalized investment guidance for Indian markets. How can I assist you today?",
+    content: "👋 Hello! I'm your Investment Agent powered by advanced analytics. I can help you understand your portfolio, explain market movements, and provide personalized investment guidance for Indian markets. How can I assist you today?",
     timestamp: new Date(),
     suggestions: [
       "Why did my portfolio drop today?",
@@ -72,8 +72,8 @@ export default function Agent() {
                 <Bot className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <h2 className="font-semibold">Investment AI Agent</h2>
-                <p className="text-xs text-muted-foreground">Powered by Lovable AI</p>
+                <h2 className="font-semibold">Investment Agent</h2>
+                <p className="text-xs text-muted-foreground">Powered by advanced analytics</p>
               </div>
               <div className="ml-auto flex items-center gap-2 px-3 py-1 rounded-full bg-gain/10 text-gain text-xs">
                 <div className="w-2 h-2 rounded-full bg-gain animate-pulse" />

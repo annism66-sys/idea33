@@ -28,7 +28,7 @@ const navItems = [
   { path: "/backtest", label: "Backtest", icon: BarChart3 },
   { path: "/options-intelligence", label: "Options", icon: Gauge },
   { path: "/portfolio", label: "Portfolio", icon: PieChart },
-  { path: "/agent", label: "AI Agent", icon: Bot },
+  { path: "/agent", label: "Agent", icon: Bot },
   { path: "/plans", label: "Plans", icon: Crown },
 ];
 
@@ -48,7 +48,7 @@ export function Navbar() {
             <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg group-hover:shadow-primary/30 transition-shadow">
               <TrendingUp className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-lg font-semibold tracking-tight">InvestIQ</span>
+            <span className="text-lg font-semibold tracking-tight">Arken</span>
           </Link>
 
           {/* Desktop Navigation */}

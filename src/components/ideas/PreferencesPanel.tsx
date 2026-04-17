@@ -134,7 +134,7 @@ export function PreferencesPanel({
           ) : (
             <>
               <Sparkles className="w-4 h-4" />
-              Generate AI Ideas
+              Generate Ideas
             </>
           )}
         </Button>

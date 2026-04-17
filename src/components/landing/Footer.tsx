@@ -31,10 +31,10 @@ export function Footer() {
               <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-lg font-semibold">InvestIQ</span>
+              <span className="text-lg font-semibold">Arken</span>
             </Link>
             <p className="text-sm text-muted-foreground mb-4">
-              AI-powered investment intelligence for the Indian markets.
+              Intelligent investment platform for the Indian markets.
             </p>
             <div className="flex items-center gap-3">
               <a href="#" className="p-2 rounded-lg hover:bg-accent/50 transition-colors">
@@ -70,7 +70,7 @@ export function Footer() {
 
         <div className="pt-8 border-t border-border/50 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2025 InvestIQ. All rights reserved.
+            © 2025 Arken. All rights reserved.
           </p>
           <p className="text-xs text-muted-foreground">
             Investment in securities market are subject to market risks. Read all the related documents carefully before investing.
