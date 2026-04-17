@@ -25,7 +25,7 @@ export default function OptionsIntelligence() {
           </div>
           <h1 className="text-3xl font-bold mb-2">Smart Intelligence Engine</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Probabilistic options analytics, regime detection, and advanced decision intelligence — powered by AI.
+            Probabilistic options analytics, regime detection, and advanced decision intelligence.
           </p>
         </motion.div>
 

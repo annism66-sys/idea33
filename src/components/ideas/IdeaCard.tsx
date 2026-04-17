@@ -63,7 +63,7 @@ export function IdeaCard({ idea, index, onConvertToStrategy }: IdeaCardProps) {
       <div className="mb-4 p-4 rounded-lg bg-secondary/30">
         <div className="flex items-center gap-2 mb-2">
           <TrendingUp className="w-4 h-4 text-primary" />
-          <span className="text-sm font-medium">AI Rationale</span>
+          <span className="text-sm font-medium">Rationale</span>
         </div>
         <p className="text-sm text-muted-foreground">{idea.rationale}</p>
       </div>

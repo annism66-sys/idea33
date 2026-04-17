@@ -6,13 +6,13 @@ import { BrokerConnect } from "@/components/BrokerConnect";
 
 const stats = [
   { value: "₹10Cr+", label: "Backtested Volume" },
-  { value: "500+", label: "AI Strategies" },
+  { value: "500+", label: "Smart Strategies" },
   { value: "15%", label: "Avg. Alpha" },
-  { value: "24/7", label: "AI Monitoring" },
+  { value: "24/7", label: "Automated Monitoring" },
 ];
 
 const features = [
-  { icon: Sparkles, label: "AI-Powered Ideas" },
+  { icon: Sparkles, label: "Intelligent Ideas" },
   { icon: TrendingUp, label: "Smart Backtesting" },
   { icon: Shield, label: "Risk Analytics" },
   { icon: Zap, label: "Real-time Insights" },
@@ -63,7 +63,7 @@ export function HeroSection() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-8"
           >
             <Sparkles className="w-4 h-4" />
-            <span>AI-Powered Investment Intelligence</span>
+            <span>Intelligent Investment Platform</span>
           </motion.div>
 
           {/* Headline */}
@@ -86,8 +86,8 @@ export function HeroSection() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
           >
-            Harness the power of AI to discover investment opportunities, build rule-based strategies, 
-            and manage your portfolio with institutional-grade analytics for Indian markets.
+            Harness advanced analytics to discover investment opportunities, build rule-based strategies, 
+            and manage your portfolio with institutional-grade insights for Indian markets.
           </motion.p>
 
           {/* CTA Buttons */}

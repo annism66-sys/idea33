@@ -82,9 +82,9 @@ export default function Ideas() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold mb-2">AI Investment Ideas</h1>
+          <h1 className="text-3xl font-bold mb-2">Intelligent Investment Ideas</h1>
           <p className="text-muted-foreground">
-            Discover personalized investment opportunities powered by AI analysis of Indian markets
+            Discover personalized investment opportunities powered by advanced analysis of Indian markets
           </p>
         </motion.div>
 
@@ -129,7 +129,7 @@ export default function Ideas() {
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Ready to Generate Ideas</h3>
                 <p className="text-muted-foreground max-w-md mx-auto">
-                  Set your preferences on the left and click "Generate AI Ideas" to get personalized investment opportunities
+                  Set your preferences on the left and click "Generate Ideas" to get personalized investment opportunities
                 </p>
               </motion.div>
             )}

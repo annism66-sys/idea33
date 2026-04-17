@@ -76,7 +76,7 @@ export function RegimeDetection() {
         </div>
         <div>
           <h3 className="text-lg font-semibold">Market Regime Detection</h3>
-          <p className="text-sm text-muted-foreground">AI-detected market environment classification</p>
+          <p className="text-sm text-muted-foreground">Automated market environment classification</p>
         </div>
       </div>
 

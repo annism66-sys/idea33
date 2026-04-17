@@ -95,7 +95,7 @@ export function useAIChat(initialMessages: Message[]) {
       // Get the current session token for authenticated requests
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
-        throw new Error("Please sign in to use the AI chat feature");
+        throw new Error("Please sign in to use the chat feature");
       }
       const authToken = session.access_token;
 
@@ -165,10 +165,10 @@ export function useAIChat(initialMessages: Message[]) {
       });
 
     } catch (error) {
-      console.error("AI chat error:", error);
+      console.error("Chat error:", error);
       toast({
-        title: "AI Error",
-        description: error instanceof Error ? error.message : "Failed to get AI response",
+        title: "Chat Error",
+        description: error instanceof Error ? error.message : "Failed to get response",
         variant: "destructive",
       });
       setMessages(prev => {
