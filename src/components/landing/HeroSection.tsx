@@ -93,6 +93,21 @@ export function HeroSection() {
             and manage your portfolio with institutional-grade insights for Indian markets.
           </motion.p>
 
+          {/* Mode Toggle — instant Prototype ↔ Live switch */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="flex flex-col items-center gap-2 mb-8"
+          >
+            <ModeToggle size="lg" />
+            <p className="text-xs text-muted-foreground">
+              {mode === "live"
+                ? "Live mode · real data where available, simulated fallbacks clearly labeled"
+                : "Prototype mode · curated demo data and simulated workflows"}
+            </p>
+          </motion.div>
+
           {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
