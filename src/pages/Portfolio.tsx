@@ -36,6 +36,7 @@ import { PortfolioAdvancedCharts } from "@/components/portfolio/PortfolioAdvance
 import { IntelligentRebalancing } from "@/components/portfolio/IntelligentRebalancing";
 import { ContinuousMonitoring } from "@/components/portfolio/ContinuousMonitoring";
 import { BrokerConnect } from "@/components/BrokerConnect";
+import { ModeBadge } from "@/components/mode/ModeBadge";
 import { formatDistanceToNow } from "date-fns";
 
 const sectorColors: Record<string, string> = {
@@ -121,7 +122,10 @@ export default function Portfolio() {
           className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8"
         >
           <div>
-            <h1 className="text-3xl font-bold mb-2">Portfolio Analytics</h1>
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-3xl font-bold">Portfolio Analytics</h1>
+              <ModeBadge source="portfolio-prices" />
+            </div>
             <p className="text-muted-foreground">
               Real-time portfolio overview and risk analysis
             </p>

@@ -92,7 +92,10 @@ export default function Backtest() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Backtest Results</h1>
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-3xl font-bold">Backtest Results</h1>
+              <ModeBadge source="backtest" />
+            </div>
             <p className="text-muted-foreground">
               {strategyName} • Jan 2022 - Dec 2024
               {riskBudget.validated && <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-gain/10 text-gain">Risk Validated</span>}
