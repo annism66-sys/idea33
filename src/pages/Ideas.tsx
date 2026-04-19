@@ -8,6 +8,7 @@ import { useStrategyStore, InvestmentIdea } from "@/stores/useStrategyStore";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Sparkles, Loader2 } from "lucide-react";
+import { ModeBadge } from "@/components/mode/ModeBadge";
 
 export default function Ideas() {
   const navigate = useNavigate();
@@ -82,7 +83,10 @@ export default function Ideas() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl font-bold mb-2">Intelligent Investment Ideas</h1>
+          <div className="flex items-center gap-3 mb-2">
+            <h1 className="text-3xl font-bold">Intelligent Investment Ideas</h1>
+            <ModeBadge source="ideas" />
+          </div>
           <p className="text-muted-foreground">
             Discover personalized investment opportunities powered by advanced analysis of Indian markets
           </p>

@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, TrendingUp, Shield, Zap, Link2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BrokerConnect } from "@/components/BrokerConnect";
+import { ModeToggle } from "@/components/mode/ModeToggle";
+import { useModeStore } from "@/stores/useModeStore";
 
 const stats = [
   { value: "₹10Cr+", label: "Backtested Volume" },
@@ -19,6 +21,7 @@ const features = [
 ];
 
 export function HeroSection() {
+  const mode = useModeStore((s) => s.mode);
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Effects */}
@@ -89,6 +92,21 @@ export function HeroSection() {
             Harness advanced analytics to discover investment opportunities, build rule-based strategies, 
             and manage your portfolio with institutional-grade insights for Indian markets.
           </motion.p>
+
+          {/* Mode Toggle — instant Prototype ↔ Live switch */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            className="flex flex-col items-center gap-2 mb-8"
+          >
+            <ModeToggle size="lg" />
+            <p className="text-xs text-muted-foreground">
+              {mode === "live"
+                ? "Live mode · real data where available, simulated fallbacks clearly labeled"
+                : "Prototype mode · curated demo data and simulated workflows"}
+            </p>
+          </motion.div>
 
           {/* CTA Buttons */}
           <motion.div

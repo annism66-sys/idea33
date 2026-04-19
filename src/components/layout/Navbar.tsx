@@ -20,6 +20,7 @@ import {
 import { useState } from "react";
 import { BrokerConnect } from "@/components/BrokerConnect";
 import { useAuth } from "@/hooks/useAuth";
+import { ModeToggle } from "@/components/mode/ModeToggle";
 
 const navItems = [
   { path: "/ideas", label: "Ideas", icon: Lightbulb },
@@ -83,6 +84,7 @@ export function Navbar() {
 
           {/* Actions */}
           <div className="hidden md:flex items-center gap-3">
+            <ModeToggle size="sm" />
             <BrokerConnect 
               variant="compact"
               trigger={

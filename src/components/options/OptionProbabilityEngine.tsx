@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Gauge, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { ModeBadge } from "@/components/mode/ModeBadge";
 
 interface ProbabilityResult {
   label: string;
@@ -34,7 +35,10 @@ export function OptionProbabilityEngine() {
           <Gauge className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <h3 className="font-semibold">Option Probability Engine</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">Option Probability Engine</h3>
+            <ModeBadge source="options-chain" />
+          </div>
           <p className="text-xs text-muted-foreground">NIFTY {selectedStrike} CE • 7 DTE • Spot: 22,050</p>
         </div>
       </div>
