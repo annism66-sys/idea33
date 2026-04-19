@@ -13,6 +13,7 @@ import { BacktestCharts } from "@/components/backtest/BacktestCharts";
 import { BacktestRiskContribution } from "@/components/backtest/BacktestRiskContribution";
 import { MonthlyHeatmap } from "@/components/backtest/MonthlyHeatmap";
 import { BacktestActions } from "@/components/backtest/BacktestActions";
+import { ModeBadge } from "@/components/mode/ModeBadge";
 
 // Generate mock data based on strategy
 function generatePerformanceData(stockCount: number) {

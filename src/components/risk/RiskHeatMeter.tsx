@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Flame, TrendingDown, Activity, Target } from "lucide-react";
+import { ModeBadge } from "@/components/mode/ModeBadge";
 
 interface RiskHeatMeterProps {
   concentrationRisk: number;
@@ -48,7 +49,10 @@ export function RiskHeatMeter({
           <Flame className={`w-5 h-5 ${getColor(overallRisk)}`} />
         </div>
         <div>
-          <h3 className="font-semibold">Risk Heat Meter</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-semibold">Risk Heat Meter</h3>
+            <ModeBadge source="risk-heat" />
+          </div>
           <p className="text-xs text-muted-foreground">Composite risk temperature</p>
         </div>
         <div className="ml-auto text-right">
