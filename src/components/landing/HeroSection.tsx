@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Sparkles, TrendingUp, Shield, Zap, Link2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BrokerConnect } from "@/components/BrokerConnect";
+import { ModeToggle } from "@/components/mode/ModeToggle";
+import { useModeStore } from "@/stores/useModeStore";
 
 const stats = [
   { value: "₹10Cr+", label: "Backtested Volume" },
@@ -19,6 +21,7 @@ const features = [
 ];
 
 export function HeroSection() {
+  const mode = useModeStore((s) => s.mode);
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Effects */}
