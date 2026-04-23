@@ -94,7 +94,26 @@ export function Navbar() {
                 </Button>
               }
             />
-            {/* Auth disabled — open-access demo mode */}
+            {!loading && (
+              user ? (
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/60 border border-border/40">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">{displayName}</span>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={signOut} className="gap-2">
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="outline" size="sm" className="gap-2 rounded-full">
+                    Sign In
+                  </Button>
+                </Link>
+              )
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -133,7 +152,29 @@ export function Navbar() {
                   </Link>
                 );
               })}
-              {/* Auth disabled — open-access demo mode */}
+              {!loading && (
+                user ? (
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors text-left"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    Sign Out ({displayName})
+                  </button>
+                ) : (
+                  <Link
+                    to="/auth"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
+                  >
+                    <User className="w-5 h-5" />
+                    Sign In
+                  </Link>
+                )
+              )}
             </nav>
           </motion.div>
         )}
