@@ -94,26 +94,7 @@ export function Navbar() {
                 </Button>
               }
             />
-            {!loading && user ? (
-              <>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-secondary/50 text-sm">
-                  <User className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-medium truncate max-w-[120px]">{displayName}</span>
-                </div>
-                <Button variant="ghost" size="sm" onClick={signOut} className="gap-2">
-                  <LogOut className="w-4 h-4" />
-                </Button>
-              </>
-            ) : !loading ? (
-              <>
-                <Link to="/auth">
-                  <Button variant="ghost" size="sm" className="text-foreground font-medium">Sign In</Button>
-                </Link>
-                <Link to="/auth">
-                  <Button size="sm" className="rounded-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-5">Get Started</Button>
-                </Link>
-              </>
-            ) : null}
+            {/* Auth disabled — open-access demo mode */}
           </div>
 
           {/* Mobile Menu Button */}
@@ -152,24 +133,7 @@ export function Navbar() {
                   </Link>
                 );
               })}
-              {!loading && user ? (
-                <button
-                  onClick={() => { signOut(); setMobileMenuOpen(false); }}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
-                >
-                  <LogOut className="w-5 h-5" />
-                  Sign Out
-                </button>
-              ) : !loading ? (
-                <Link
-                  to="/auth"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg text-primary hover:bg-primary/10 transition-colors"
-                >
-                  <User className="w-5 h-5" />
-                  Sign In
-                </Link>
-              ) : null}
+              {/* Auth disabled — open-access demo mode */}
             </nav>
           </motion.div>
         )}
