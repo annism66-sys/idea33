@@ -11,6 +11,11 @@ interface UpgradeGateProps {
 }
 
 export function UpgradeGate({ requiredPlan, featureName, children }: UpgradeGateProps) {
+  // Plan gating temporarily disabled — full-access demo mode.
+  // All features are unlocked regardless of the user's plan tier.
+  return <>{children}</>;
+
+  // eslint-disable-next-line no-unreachable
   const { hasAccess } = usePlanStore();
 
   if (hasAccess(requiredPlan)) {
