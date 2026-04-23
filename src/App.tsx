@@ -27,7 +27,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Navigate to="/portfolio" replace />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="/plans" element={<Plans />} />
           <Route path="/ideas" element={<ProtectedRoute><Ideas /></ProtectedRoute>} />
           <Route path="/strategy" element={<ProtectedRoute><Strategy /></ProtectedRoute>} />
