@@ -152,7 +152,29 @@ export function Navbar() {
                   </Link>
                 );
               })}
-              {/* Auth disabled — open-access demo mode */}
+              {!loading && (
+                user ? (
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors text-left"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    Sign Out ({displayName})
+                  </button>
+                ) : (
+                  <Link
+                    to="/auth"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
+                  >
+                    <User className="w-5 h-5" />
+                    Sign In
+                  </Link>
+                )
+              )}
             </nav>
           </motion.div>
         )}
