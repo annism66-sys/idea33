@@ -94,7 +94,26 @@ export function Navbar() {
                 </Button>
               }
             />
-            {/* Auth disabled — open-access demo mode */}
+            {!loading && (
+              user ? (
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/60 border border-border/40">
+                    <User className="w-4 h-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">{displayName}</span>
+                  </div>
+                  <Button variant="ghost" size="sm" onClick={signOut} className="gap-2">
+                    <LogOut className="w-4 h-4" />
+                    Sign Out
+                  </Button>
+                </div>
+              ) : (
+                <Link to="/auth">
+                  <Button variant="outline" size="sm" className="gap-2 rounded-full">
+                    Sign In
+                  </Button>
+                </Link>
+              )
+            )}
           </div>
 
           {/* Mobile Menu Button */}
