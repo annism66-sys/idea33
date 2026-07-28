@@ -248,37 +248,64 @@ export default function RiskBudget() {
           </motion.div>
         </div>
 
-        {/* Elite Risk Analytics — Pro tier */}
+        {/* Risk Intelligence — two equal pillars */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
           className="mt-12"
         >
-          <h2 className="text-2xl font-bold mb-6 text-center">Advanced Risk Analytics</h2>
-
-          <UpgradeGate requiredPlan="pro" featureName="Advanced Risk Analytics">
-            <div className="grid md:grid-cols-2 gap-6 mb-6">
-              <RiskHeatMeter />
-              <DriftIndicator />
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-3">
+              <Shield className="w-4 h-4 text-primary" />
+              <span className="text-sm font-medium text-primary">Risk Intelligence</span>
             </div>
-            <div className="grid md:grid-cols-2 gap-6">
-              <ExposureRadar />
-              <DownsideProbabilityCard />
-            </div>
-          </UpgradeGate>
-        </motion.div>
+            <h2 className="text-2xl font-bold">Two Pillars of Risk</h2>
+            <p className="text-sm text-muted-foreground mt-1">
+              Market exposure and trader behavior — analyzed side by side
+            </p>
+          </div>
 
-        {/* Behavioral Intelligence Engine — Pro tier */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mt-12"
-        >
-          <UpgradeGate requiredPlan="pro" featureName="Behavioral Intelligence Engine">
-            <BehavioralIntelligence />
-          </UpgradeGate>
+          <div className="grid lg:grid-cols-2 gap-6">
+            {/* Pillar 1: Market Risk */}
+            <section className="glass-card-elevated p-6 rounded-2xl">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-warning/20 border border-warning/30">
+                  <TrendingDown className="w-5 h-5 text-warning" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Market Risk</h3>
+                  <p className="text-sm text-muted-foreground">Exposure, drift & downside probability</p>
+                </div>
+              </div>
+
+              <UpgradeGate requiredPlan="pro" featureName="Market Risk Analytics">
+                <div className="grid grid-cols-1 gap-4">
+                  <RiskHeatMeter />
+                  <DriftIndicator />
+                  <ExposureRadar />
+                  <DownsideProbabilityCard />
+                </div>
+              </UpgradeGate>
+            </section>
+
+            {/* Pillar 2: Behavioral Risk */}
+            <section className="glass-card-elevated p-6 rounded-2xl">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-accent/20 border border-accent/30">
+                  <Zap className="w-5 h-5 text-accent" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold">Behavioral Risk</h3>
+                  <p className="text-sm text-muted-foreground">Discipline, emotional patterns & bias detection</p>
+                </div>
+              </div>
+
+              <UpgradeGate requiredPlan="pro" featureName="Behavioral Intelligence Engine">
+                <BehavioralIntelligence />
+              </UpgradeGate>
+            </section>
+          </div>
         </motion.div>
       </div>
     </DashboardLayout>
