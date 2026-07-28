@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Brain, AlertTriangle, TrendingUp, Clock, Gauge, Target, Activity } from "lucide-react";
+import { ModeBadge } from "@/components/mode/ModeBadge";
 
 interface BehaviorAlert {
   type: "overtrading" | "revenge" | "fomo" | "panic" | "sizing" | "escalation";
