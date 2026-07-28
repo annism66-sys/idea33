@@ -19,6 +19,7 @@ export const planFeatures: PlanFeature[] = [
   { name: "Standard Explanations", basic: true, pro: true, institutional: true },
   { name: "Live Risk Radar", basic: false, pro: true, institutional: true },
   { name: "Continuous Portfolio Monitoring", basic: false, pro: true, institutional: true },
+  { name: "Market Risk Analytics", basic: false, pro: true, institutional: true },
   { name: "Behavioral Intelligence Engine", basic: false, pro: true, institutional: true },
   { name: "Advanced Strategy Builder", basic: false, pro: true, institutional: true },
   { name: "Option Probability Engine", basic: false, pro: true, institutional: true },

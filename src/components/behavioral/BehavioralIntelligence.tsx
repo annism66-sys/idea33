@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Brain, AlertTriangle, TrendingUp, Clock, Gauge, Target, Activity } from "lucide-react";
+import { ModeBadge } from "@/components/mode/ModeBadge";
 
 interface BehaviorAlert {
   type: "overtrading" | "revenge" | "fomo" | "panic" | "sizing" | "escalation";
@@ -89,7 +90,10 @@ export function BehavioralIntelligence() {
           <Brain className="w-5 h-5 text-accent" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold">Behavioral Intelligence Engine</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold">Behavioral Intelligence Engine</h3>
+            <ModeBadge source="behavioral-risk" />
+          </div>
           <p className="text-sm text-muted-foreground">Data-driven trading psychology analysis</p>
         </div>
       </div>
