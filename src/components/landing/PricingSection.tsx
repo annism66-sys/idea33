@@ -12,7 +12,7 @@ const tierIcons = {
 
 const highlights: Record<PlanTier, string[]> = {
   basic: ["Portfolio Sync", "Intelligent Idea Generation", "Risk Dashboard", "Strategy Simulation"],
-  pro: ["Live Risk Radar", "Behavioral Intelligence", "Option Probability Engine", "Regime Detection"],
+  pro: ["Market Risk Analytics", "Behavioral Intelligence", "Option Probability Engine", "Regime Detection"],
   institutional: ["Multi-Portfolio Monitoring", "Capital Survival Modeling", "API Access", "Compliance Logs"],
 };
 
