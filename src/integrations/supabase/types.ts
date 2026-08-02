@@ -14,6 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
+      angelone_instruments: {
+        Row: {
+          exchange: string
+          instrumenttype: string | null
+          lotsize: number | null
+          name: string | null
+          symbol: string
+          tick_size: number | null
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          exchange: string
+          instrumenttype?: string | null
+          lotsize?: number | null
+          name?: string | null
+          symbol: string
+          tick_size?: number | null
+          token: string
+          updated_at?: string
+        }
+        Update: {
+          exchange?: string
+          instrumenttype?: string | null
+          lotsize?: number | null
+          name?: string | null
+          symbol?: string
+          tick_size?: number | null
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      broker_connections: {
+        Row: {
+          access_token: string | null
+          api_key: string | null
+          broker: string
+          client_id: string
+          created_at: string
+          feed_token: string | null
+          id: string
+          is_active: boolean
+          refresh_token: string | null
+          token_expiry: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          api_key?: string | null
+          broker: string
+          client_id: string
+          created_at?: string
+          feed_token?: string | null
+          id?: string
+          is_active?: boolean
+          refresh_token?: string | null
+          token_expiry?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          api_key?: string | null
+          broker?: string
+          client_id?: string
+          created_at?: string
+          feed_token?: string | null
+          id?: string
+          is_active?: boolean
+          refresh_token?: string | null
+          token_expiry?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       portfolio_holdings: {
         Row: {
           average_price: number
