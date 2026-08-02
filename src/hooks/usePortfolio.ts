@@ -23,6 +23,10 @@ export function usePortfolio() {
   const { user } = useAuth();
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshingPrices, setRefreshingPrices] = useState(false);
+  const { isConnected: angelConnected, refetch: refetchBroker } =
+    useBrokerConnection("angelone");
+
 
   const fetchHoldings = async () => {
     if (!user) {
