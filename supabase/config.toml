@@ -8,3 +8,12 @@ verify_jwt = false
 
 [functions.generate-ideas]
 verify_jwt = false
+
+[functions.angel-one-auth]
+verify_jwt = false
+
+[functions.angel-one-portfolio]
+verify_jwt = false
+
+[functions.angel-one-ltp]
+verify_jwt = false

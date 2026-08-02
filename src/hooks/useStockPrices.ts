@@ -1,54 +1,49 @@
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useBrokerConnection } from "@/hooks/useBrokerConnection";
 
 interface PriceUpdate {
   symbol: string;
   price: number;
-  change: number;
-  changePercent: number;
+  change?: number;
+  changePercent?: number;
 }
 
+/**
+ * Manual price refresh.
+ * Routes to Angel One's live LTP feed when the user has an active Angel One
+ * connection, otherwise falls back to the market-data function.
+ */
 export function useStockPrices() {
   const [updating, setUpdating] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const { isConnected: angelConnected } = useBrokerConnection("angelone");
 
   const refreshPrices = useCallback(async (): Promise<PriceUpdate[]> => {
     setUpdating(true);
-    
-    try {
-      // Get the current session token
-      const { data: { session } } = await supabase.auth.getSession();
-      const authToken = session?.access_token;
 
-      if (!authToken) {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
         throw new Error("Please sign in to refresh prices");
       }
 
-      const response = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-stock-prices`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`,
-          },
-        }
-      );
+      const fn = angelConnected ? "angel-one-ltp" : "update-stock-prices";
+      const { data, error } = await supabase.functions.invoke(fn, { body: {} });
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to update prices");
-      }
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
-      const result = await response.json();
-      
       setLastUpdated(new Date());
-      
-      if (result.updated > 0) {
+
+      const updated: number = data?.updated ?? 0;
+      if (updated > 0) {
         toast({
           title: "Prices updated",
-          description: `Updated ${result.updated} stock prices from NSE.`,
+          description: `Updated ${updated} stock price${updated === 1 ? "" : "s"} from ${
+            angelConnected ? "Angel One" : "NSE"
+          }.`,
         });
       } else {
         toast({
@@ -57,23 +52,24 @@ export function useStockPrices() {
         });
       }
 
-      return result.prices || [];
+      return data?.prices ?? [];
     } catch (error: any) {
       console.error("Price update error:", error);
       toast({
         title: "Update failed",
-        description: error.message || "Could not fetch latest prices.",
+        description: error?.message || "Could not fetch latest prices.",
         variant: "destructive",
       });
       return [];
     } finally {
       setUpdating(false);
     }
-  }, []);
+  }, [angelConnected]);
 
   return {
     refreshPrices,
     updating,
     lastUpdated,
+    angelConnected,
   };
 }

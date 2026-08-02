@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -15,11 +17,14 @@ import {
   ExternalLink, 
   Shield, 
   Zap,
-  ChevronRight
+  ChevronRight,
+  ArrowLeft,
+  Loader2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+
 
 const brokers = [
   { id: "zerodha", name: "Zerodha", logo: "Z", color: "from-[#387ED1] to-[#2B5C9E]", description: "India's largest retail stockbroker", users: "1.5Cr+ users", popular: true },
@@ -84,6 +89,18 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
   const [open, setOpen] = useState(false);
   const [connecting, setConnecting] = useState<string | null>(null);
   const [connected, setConnected] = useState<string[]>([]);
+  const [showAngelForm, setShowAngelForm] = useState(false);
+
+  const handleAngelSuccess = (imported: number) => {
+    setConnected(prev => (prev.includes("angelone") ? prev : [...prev, "angelone"]));
+    setShowAngelForm(false);
+    setOpen(false);
+    toast({
+      title: "Angel One connected",
+      description: `Imported ${imported} holding${imported === 1 ? "" : "s"} from your demat account.`,
+    });
+    onConnect?.();
+  };
 
   const handleConnect = async (brokerId: string) => {
     if (!user) {
@@ -91,7 +108,15 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
       return;
     }
 
+    // Angel One uses a real SmartAPI login instead of the simulated import.
+    if (brokerId === "angelone") {
+      setShowAngelForm(true);
+      return;
+    }
+
     setConnecting(brokerId);
+    
+
     
     try {
       const portfolioData = mockPortfolioData[brokerId] || mockPortfolioData.zerodha;
@@ -143,11 +168,24 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v);
+        if (!v) setShowAngelForm(false);
+      }}
+    >
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-hidden">
+        {showAngelForm ? (
+          <AngelOneLoginForm
+            onBack={() => setShowAngelForm(false)}
+            onSuccess={handleAngelSuccess}
+          />
+        ) : (
+        <>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -210,9 +248,12 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
             <ExternalLink className="w-3 h-3" />
           </Button>
         </div>
+        </>
+        )}
       </DialogContent>
     </Dialog>
   );
+
 }
 
 interface BrokerCardProps {
@@ -293,5 +334,150 @@ function BrokerCardCompact({ broker, isConnecting, isConnected, onConnect }: Bro
         ) : null}
       </div>
     </motion.div>
+  );
+}
+
+interface AngelOneLoginFormProps {
+  onBack: () => void;
+  onSuccess: (imported: number) => void;
+}
+
+function AngelOneLoginForm({ onBack, onSuccess }: AngelOneLoginFormProps) {
+  const [clientCode, setClientCode] = useState("");
+  const [mpin, setMpin] = useState("");
+  const [totp, setTotp] = useState("");
+  const [step, setStep] = useState<"idle" | "auth" | "import">("idle");
+
+  const busy = step !== "idle";
+  const valid = clientCode.trim().length >= 3 && /^\d{4,6}$/.test(mpin) && /^\d{6}$/.test(totp);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!valid || busy) return;
+
+    try {
+      setStep("auth");
+      const { data: authData, error: authError } = await supabase.functions.invoke(
+        "angel-one-auth",
+        { body: { clientcode: clientCode.trim().toUpperCase(), password: mpin.trim(), totp: totp.trim() } }
+      );
+      if (authError) throw authError;
+      if (authData?.error) {
+        throw new Error(
+          typeof authData.error === "string" ? authData.error : "Invalid credentials."
+        );
+      }
+
+      setStep("import");
+      const { data: pfData, error: pfError } = await supabase.functions.invoke(
+        "angel-one-portfolio",
+        { body: {} }
+      );
+      if (pfError) throw pfError;
+      if (pfData?.error) throw new Error(pfData.error);
+
+      // Clear sensitive inputs from memory as soon as we're done.
+      setMpin("");
+      setTotp("");
+      onSuccess(pfData?.imported ?? 0);
+    } catch (error: any) {
+      toast({
+        title: "Angel One connection failed",
+        description: error?.message ?? "Could not connect to Angel One.",
+        variant: "destructive",
+      });
+      setStep("idle");
+    }
+  };
+
+  return (
+    <>
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2 text-xl">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#F26522] to-[#C44F18] flex items-center justify-center">
+            <span className="text-sm font-bold text-white">A</span>
+          </div>
+          Connect Angel One
+        </DialogTitle>
+        <DialogDescription className="text-base">
+          Sign in with your SmartAPI credentials to import your live holdings
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="flex items-center gap-3 p-3 rounded-lg bg-gain/5 border border-gain/20">
+        <Shield className="w-5 h-5 text-gain flex-shrink-0" />
+        <div>
+          <div className="text-sm font-medium text-gain">Credentials are never stored</div>
+          <div className="text-xs text-muted-foreground">
+            Your MPIN and TOTP are used once to create a session. Only the resulting
+            read-only session tokens are saved.
+          </div>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="angel-client">Angel One Client ID</Label>
+          <Input
+            id="angel-client"
+            placeholder="S1234567"
+            autoComplete="off"
+            value={clientCode}
+            onChange={(e) => setClientCode(e.target.value.toUpperCase())}
+            disabled={busy}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <Label htmlFor="angel-mpin">MPIN</Label>
+            <Input
+              id="angel-mpin"
+              type="password"
+              inputMode="numeric"
+              placeholder="••••"
+              maxLength={6}
+              autoComplete="off"
+              value={mpin}
+              onChange={(e) => setMpin(e.target.value.replace(/\D/g, ""))}
+              disabled={busy}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="angel-totp">TOTP Code</Label>
+            <Input
+              id="angel-totp"
+              inputMode="numeric"
+              placeholder="123456"
+              maxLength={6}
+              autoComplete="one-time-code"
+              value={totp}
+              onChange={(e) => setTotp(e.target.value.replace(/\D/g, ""))}
+              disabled={busy}
+            />
+          </div>
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          The TOTP is the 6-digit code from your authenticator app linked to Angel One.
+          It changes every 30 seconds — submit promptly.
+        </p>
+
+        <div className="flex items-center justify-between pt-2 border-t border-border">
+          <Button type="button" variant="ghost" size="sm" className="gap-1" onClick={onBack} disabled={busy}>
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Button>
+          <Button type="submit" disabled={!valid || busy} className="gap-2">
+            {busy && <Loader2 className="w-4 h-4 animate-spin" />}
+            {step === "auth"
+              ? "Signing in..."
+              : step === "import"
+              ? "Importing holdings..."
+              : "Connect & Import"}
+          </Button>
+        </div>
+      </form>
+    </>
   );
 }
