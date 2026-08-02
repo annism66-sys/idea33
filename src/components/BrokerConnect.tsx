@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -15,11 +17,14 @@ import {
   ExternalLink, 
   Shield, 
   Zap,
-  ChevronRight
+  ChevronRight,
+  ArrowLeft,
+  Loader2
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+
 
 const brokers = [
   { id: "zerodha", name: "Zerodha", logo: "Z", color: "from-[#387ED1] to-[#2B5C9E]", description: "India's largest retail stockbroker", users: "1.5Cr+ users", popular: true },
