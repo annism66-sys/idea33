@@ -89,6 +89,18 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
   const [open, setOpen] = useState(false);
   const [connecting, setConnecting] = useState<string | null>(null);
   const [connected, setConnected] = useState<string[]>([]);
+  const [showAngelForm, setShowAngelForm] = useState(false);
+
+  const handleAngelSuccess = (imported: number) => {
+    setConnected(prev => (prev.includes("angelone") ? prev : [...prev, "angelone"]));
+    setShowAngelForm(false);
+    setOpen(false);
+    toast({
+      title: "Angel One connected",
+      description: `Imported ${imported} holding${imported === 1 ? "" : "s"} from your demat account.`,
+    });
+    onConnect?.();
+  };
 
   const handleConnect = async (brokerId: string) => {
     if (!user) {
@@ -96,7 +108,15 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
       return;
     }
 
+    // Angel One uses a real SmartAPI login instead of the simulated import.
+    if (brokerId === "angelone") {
+      setShowAngelForm(true);
+      return;
+    }
+
     setConnecting(brokerId);
+    
+
     
     try {
       const portfolioData = mockPortfolioData[brokerId] || mockPortfolioData.zerodha;
