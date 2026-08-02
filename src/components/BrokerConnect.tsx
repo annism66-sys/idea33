@@ -168,11 +168,24 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(v) => {
+        setOpen(v);
+        if (!v) setShowAngelForm(false);
+      }}
+    >
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-hidden">
+        {showAngelForm ? (
+          <AngelOneLoginForm
+            onBack={() => setShowAngelForm(false)}
+            onSuccess={handleAngelSuccess}
+          />
+        ) : (
+        <>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -235,9 +248,12 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
             <ExternalLink className="w-3 h-3" />
           </Button>
         </div>
+        </>
+        )}
       </DialogContent>
     </Dialog>
   );
+
 }
 
 interface BrokerCardProps {
