@@ -6,6 +6,12 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/landing/Footer";
 import { planFeatures, planDetails, PlanTier, usePlanStore } from "@/stores/usePlanStore";
 import { toast } from "@/hooks/use-toast";
+import { useModeStore } from "@/stores/useModeStore";
+import { useAuth } from "@/hooks/useAuth";
+import { useSubscription } from "@/hooks/useSubscription";
+import { startRazorpayCheckout } from "@/lib/razorpay";
+import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 const tierIcons = {
   basic: Sparkles,
@@ -22,13 +28,61 @@ const tierColors = {
 export default function Plans() {
   const { currentPlan, setCurrentPlan } = usePlanStore();
   const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
+  const { mode } = useModeStore();
+  const { user } = useAuth();
+  const { subscription, refresh } = useSubscription();
+  const navigate = useNavigate();
+  const [processing, setProcessing] = useState<PlanTier | null>(null);
 
-  const handleSelectPlan = (tier: PlanTier) => {
-    setCurrentPlan(tier);
-    toast({
-      title: `Switched to ${planDetails[tier].name}`,
-      description: "Plan updated successfully. All features are now unlocked for preview.",
-    });
+  const handleSelectPlan = async (tier: PlanTier) => {
+    // Prototype mode keeps the instant simulated plan switch.
+    if (mode !== "live" || tier === "basic") {
+      setCurrentPlan(tier);
+      toast({
+        title: `Switched to ${planDetails[tier].name}`,
+        description:
+          mode === "live" && tier === "basic"
+            ? "You're on the free Basic plan."
+            : "Plan updated successfully. All features are now unlocked for preview.",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please sign in to subscribe to a paid plan.",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
+
+    setProcessing(tier);
+    try {
+      await startRazorpayCheckout({
+        plan: tier as "pro" | "institutional",
+        billingCycle,
+        userEmail: user.email,
+        userName: user.user_metadata?.display_name,
+        onSuccess: async () => {
+          toast({
+            title: "Payment received",
+            description: "Activating your plan — this can take a few seconds.",
+          });
+          setTimeout(refresh, 4000);
+        },
+        onDismiss: () => setProcessing(null),
+      });
+    } catch (err) {
+      toast({
+        title: "Payment could not be started",
+        description: (err as Error).message,
+        variant: "destructive",
+      });
+    } finally {
+      setProcessing(null);
+    }
   };
 
   return (
@@ -73,6 +127,19 @@ export default function Plans() {
               Annual <span className="text-primary text-xs font-semibold">Save 20%</span>
             </span>
           </motion.div>
+
+          {/* Live subscription status */}
+          {mode === "live" && subscription && subscription.status === "active" && (
+            <div className="max-w-6xl mx-auto mb-8 text-center text-sm text-muted-foreground">
+              Active subscription:{" "}
+              <span className="text-foreground font-medium">
+                {planDetails[subscription.plan]?.name ?? subscription.plan}
+              </span>
+              {subscription.current_period_end && (
+                <> — renews on {new Date(subscription.current_period_end).toLocaleDateString("en-IN")}</>
+              )}
+            </div>
+          )}
 
           {/* Plan Cards */}
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-20">
@@ -130,10 +197,21 @@ export default function Plans() {
                       variant={isCurrent ? "outline" : isPopular ? "hero" : "default"}
                       className="w-full gap-2 mb-6"
                       onClick={() => handleSelectPlan(tier)}
-                      disabled={isCurrent}
+                      disabled={isCurrent || processing !== null}
                     >
-                      {isCurrent ? "Current Plan" : `Get ${plan.name}`}
-                      {!isCurrent && <ArrowRight className="w-4 h-4" />}
+                      {processing === tier ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Opening payment...
+                        </>
+                      ) : isCurrent ? (
+                        "Current Plan"
+                      ) : (
+                        <>
+                          {mode === "live" && tier !== "basic" ? `Subscribe to ${plan.name}` : `Get ${plan.name}`}
+                          <ArrowRight className="w-4 h-4" />
+                        </>
+                      )}
                     </Button>
 
                     {/* Feature List */}
