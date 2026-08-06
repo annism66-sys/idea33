@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { useBrokerConnection } from "@/hooks/useBrokerConnection";
 import { useAngelOneWebSocket } from "@/hooks/useAngelOneWebSocket";
+import { useModeStore } from "@/stores/useModeStore";
 
 
 export interface Holding {
@@ -21,6 +22,7 @@ export interface Holding {
 
 export function usePortfolio() {
   const { user } = useAuth();
+  const mode = useModeStore((state) => state.mode);
   const [holdings, setHoldings] = useState<Holding[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshingPrices, setRefreshingPrices] = useState(false);
@@ -36,11 +38,20 @@ export function usePortfolio() {
     }
 
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from("portfolio_holdings")
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
+
+      // Prototype imports are persisted in the same table. Never expose those
+      // rows in Live mode; only holdings imported by the real Angel One feed
+      // are valid live portfolio data.
+      if (mode === "live") {
+        query = query.eq("broker_source", "angelone");
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setHoldings(data || []);
@@ -57,7 +68,7 @@ export function usePortfolio() {
 
   useEffect(() => {
     fetchHoldings();
-  }, [user]);
+  }, [user, mode]);
 
   const addHolding = async (holding: Omit<Holding, "id" | "created_at">) => {
     if (!user) return null;
