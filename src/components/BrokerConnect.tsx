@@ -152,9 +152,10 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
 
       setConnected(prev => [...prev, brokerId]);
       toast({
-        title: "Broker connected!",
-        description: `Successfully imported ${portfolioData.length} holdings from ${brokers.find(b => b.id === brokerId)?.name}.`,
+        title: "Broker connected (Prototype)",
+        description: `Loaded ${portfolioData.length} sample holdings for ${brokers.find(b => b.id === brokerId)?.name}.`,
       });
+
       onConnect?.();
     } catch (error: any) {
       toast({
