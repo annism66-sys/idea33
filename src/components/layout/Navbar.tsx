@@ -53,13 +53,13 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
               return (
                 <Link key={item.path} to={item.path}>
                   <motion.div
-                    className={`relative px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors ${
+                    className={`relative px-2 xl:px-4 py-2 rounded-lg flex items-center gap-1.5 xl:gap-2 text-[13px] xl:text-sm font-medium whitespace-nowrap transition-colors ${
                       isActive 
                         ? "text-primary" 
                         : "text-muted-foreground hover:text-foreground"
@@ -83,7 +83,7 @@ export function Navbar() {
           </nav>
 
           {/* Actions */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-2 xl:gap-3">
             <ModeToggle size="sm" />
             <BrokerConnect 
               variant="compact"
@@ -99,7 +99,7 @@ export function Navbar() {
                 <div className="flex items-center gap-2">
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/60 border border-border/40">
                     <User className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">{displayName}</span>
+                    <span className="text-sm font-medium max-w-[120px] truncate">{displayName}</span>
                   </div>
                   <Button variant="ghost" size="sm" onClick={signOut} className="gap-2">
                     <LogOut className="w-4 h-4" />
@@ -118,7 +118,7 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 rounded-lg hover:bg-accent/50 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-accent/50 transition-colors"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -131,7 +131,7 @@ export function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden py-4 border-t border-border/30"
+            className="lg:hidden py-4 border-t border-border/30"
           >
             <nav className="flex flex-col gap-1">
               {navItems.map((item) => {
