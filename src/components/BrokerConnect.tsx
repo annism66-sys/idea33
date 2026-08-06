@@ -24,6 +24,8 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
+import { useModeStore } from "@/stores/useModeStore";
+
 
 
 const brokers = [
@@ -90,14 +92,18 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
   const [connecting, setConnecting] = useState<string | null>(null);
   const [connected, setConnected] = useState<string[]>([]);
   const [showAngelForm, setShowAngelForm] = useState(false);
+  const mode = useModeStore((s) => s.mode);
 
   const handleAngelSuccess = (imported: number) => {
     setConnected(prev => (prev.includes("angelone") ? prev : [...prev, "angelone"]));
     setShowAngelForm(false);
     setOpen(false);
     toast({
-      title: "Angel One connected",
-      description: `Imported ${imported} holding${imported === 1 ? "" : "s"} from your demat account.`,
+      title: imported > 0 ? "Angel One connected" : "Angel One connected — no holdings found",
+      description:
+        imported > 0
+          ? `Imported ${imported} holding${imported === 1 ? "" : "s"} from your demat account.`
+          : "Your demat account has no equity holdings right now. Your portfolio will stay empty until you hold stocks.",
     });
     onConnect?.();
   };
@@ -114,7 +120,18 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
       return;
     }
 
+    // Live mode never fabricates holdings — only Angel One has a real import.
+    if (mode === "live") {
+      toast({
+        title: "Live import not available",
+        description: `${brokers.find(b => b.id === brokerId)?.name} is not wired for live imports yet. Connect Angel One for real holdings, or switch to Prototype mode to explore with sample data.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setConnecting(brokerId);
+
     
 
     
@@ -135,9 +152,10 @@ export function BrokerConnect({ trigger, variant = "default", onConnect }: Broke
 
       setConnected(prev => [...prev, brokerId]);
       toast({
-        title: "Broker connected!",
-        description: `Successfully imported ${portfolioData.length} holdings from ${brokers.find(b => b.id === brokerId)?.name}.`,
+        title: "Broker connected (Prototype)",
+        description: `Loaded ${portfolioData.length} sample holdings for ${brokers.find(b => b.id === brokerId)?.name}.`,
       });
+
       onConnect?.();
     } catch (error: any) {
       toast({
