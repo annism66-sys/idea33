@@ -38,20 +38,24 @@ export function usePortfolio() {
     }
 
     try {
-      let query = supabase
+      if (mode === "live") {
+        // Server-side guard: the edge function is the only source of Live
+        // holdings and it strips every non-broker (sample/prototype) row.
+        const { data, error } = await supabase.functions.invoke(
+          "portfolio-holdings",
+          { body: { mode: "live" } },
+        );
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+        setHoldings(data?.holdings || []);
+        return;
+      }
+
+      const { data, error } = await supabase
         .from("portfolio_holdings")
         .select("*")
         .eq("user_id", user.id)
         .order("created_at", { ascending: false });
-
-      // Prototype imports are persisted in the same table. Never expose those
-      // rows in Live mode; only holdings imported by the real Angel One feed
-      // are valid live portfolio data.
-      if (mode === "live") {
-        query = query.eq("broker_source", "angelone");
-      }
-
-      const { data, error } = await query;
 
       if (error) throw error;
       setHoldings(data || []);
