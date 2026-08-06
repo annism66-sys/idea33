@@ -64,18 +64,34 @@ export default function Auth() {
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    const { error } = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: `${window.location.origin}/auth`,
-    });
-    if (error) {
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+
+      if (result.error) {
+        toast({
+          title: "Google sign-in failed",
+          description: result.error.message,
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      if (result.redirected) return;
+
+      navigate("/portfolio");
+    } catch (err: any) {
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Google sign-in failed",
+        description: err?.message ?? "Unexpected error",
         variant: "destructive",
       });
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
