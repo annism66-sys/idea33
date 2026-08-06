@@ -7,11 +7,21 @@ export default {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1.25rem",
+        lg: "2rem",
+        "2xl": "2.5rem",
+      },
       screens: {
-        "2xl": "1400px",
+        sm: "100%",
+        md: "100%",
+        lg: "100%",
+        xl: "1280px",
+        "2xl": "1600px",
       },
     },
+
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
