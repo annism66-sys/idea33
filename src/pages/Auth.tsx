@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -16,12 +16,62 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
+  const hasStartedGoogleSignIn = useRef(false);
+
+  const handleGoogleSignIn = useCallback(async () => {
+    if (hasStartedGoogleSignIn.current) return;
+    hasStartedGoogleSignIn.current = true;
+
+    // Managed OAuth routes are supplied by Lovable hosting. Older Vercel
+    // deployments do not have /~oauth, so continue on the canonical domain.
+    if (window.location.hostname.endsWith(".vercel.app")) {
+      window.location.assign("https://arken.co.in/auth?google=1");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+
+      if (result.error) {
+        toast({
+          title: "Google sign-in failed",
+          description: result.error.message,
+          variant: "destructive",
+        });
+        hasStartedGoogleSignIn.current = false;
+        setIsLoading(false);
+        return;
+      }
+
+      if (result.redirected) return;
+
+      navigate("/portfolio");
+    } catch (err: any) {
+      toast({
+        title: "Google sign-in failed",
+        description: err?.message ?? "Unexpected error",
+        variant: "destructive",
+      });
+      hasStartedGoogleSignIn.current = false;
+      setIsLoading(false);
+    }
+  }, [navigate]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) navigate("/portfolio");
     });
   }, [navigate]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("google") === "1") {
+      void handleGoogleSignIn();
+    }
+  }, [handleGoogleSignIn]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,37 +111,6 @@ export default function Auth() {
       setIsLoading(false);
     }
   };
-
-  const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
-
-      if (result.error) {
-        toast({
-          title: "Google sign-in failed",
-          description: result.error.message,
-          variant: "destructive",
-        });
-        setIsLoading(false);
-        return;
-      }
-
-      if (result.redirected) return;
-
-      navigate("/portfolio");
-    } catch (err: any) {
-      toast({
-        title: "Google sign-in failed",
-        description: err?.message ?? "Unexpected error",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-    }
-  };
-
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
