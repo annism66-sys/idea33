@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.angel-one-ltp]
 verify_jwt = false
+
+[functions.portfolio-holdings]
+verify_jwt = false
