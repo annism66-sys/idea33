@@ -21,18 +21,38 @@ serve(async (req) => {
 
     const serviceClient = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
 
-    let portfolioContext = "";
-    try {
-      const { data: holdings } = await serviceClient
-        .from("portfolio_holdings")
-        .select("stock_symbol, stock_name, sector, quantity, average_price, current_price")
-        .limit(50);
-      if (holdings && holdings.length > 0) {
-        portfolioContext = `\n\nCurrent holdings: ${holdings.map(h => `${h.stock_symbol} (${h.sector || 'Unknown'})`).join(', ')}. Avoid suggesting stocks already held heavily. Consider complementary positions.`;
+    // Optional auth: anonymous visitors get generic ideas. If a bearer token is
+    // supplied it MUST be valid, and portfolio context is scoped to that user only.
+    let userId: string | null = null;
+    const authHeader = req.headers.get("authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const token = authHeader.replace("Bearer ", "");
+      const { data: claimsData, error: authError } = await serviceClient.auth.getClaims(token);
+      if (authError || !claimsData?.claims?.sub) {
+        return new Response(JSON.stringify({ error: "Invalid or expired token" }), {
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
-    } catch (e) {
-      console.error("Error fetching portfolio:", e);
+      userId = claimsData.claims.sub as string;
     }
+
+    let portfolioContext = "";
+    if (userId) {
+      try {
+        const { data: holdings } = await serviceClient
+          .from("portfolio_holdings")
+          .select("stock_symbol, stock_name, sector, quantity, average_price, current_price")
+          .eq("user_id", userId)
+          .limit(50);
+        if (holdings && holdings.length > 0) {
+          portfolioContext = `\n\nCurrent holdings: ${holdings.map(h => `${h.stock_symbol} (${h.sector || 'Unknown'})`).join(', ')}. Avoid suggesting stocks already held heavily. Consider complementary positions.`;
+        }
+      } catch (e) {
+        console.error("Error fetching portfolio:", e);
+      }
+    }
+
 
     const systemPrompt = `You are an expert Indian equity market analyst. Generate investment ideas based on user preferences. You must respond ONLY with a valid JSON array (no markdown, no code blocks).
 
