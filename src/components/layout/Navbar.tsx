@@ -7,7 +7,6 @@ import {
   FlaskConical, 
   BarChart3, 
   PieChart, 
-  Bot,
   Menu,
   X,
   Link2,
@@ -29,7 +28,6 @@ const navItems = [
   { path: "/backtest", label: "Backtest", icon: BarChart3 },
   { path: "/options-intelligence", label: "Options", icon: Gauge },
   { path: "/portfolio", label: "Portfolio", icon: PieChart },
-  { path: "/agent", label: "Agent", icon: Bot },
   { path: "/plans", label: "Plans", icon: Crown },
 ];
 
