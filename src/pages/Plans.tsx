@@ -128,6 +128,19 @@ export default function Plans() {
             </span>
           </motion.div>
 
+          {/* Live subscription status */}
+          {mode === "live" && subscription && subscription.status === "active" && (
+            <div className="max-w-6xl mx-auto mb-8 text-center text-sm text-muted-foreground">
+              Active subscription:{" "}
+              <span className="text-foreground font-medium">
+                {planDetails[subscription.plan]?.name ?? subscription.plan}
+              </span>
+              {subscription.current_period_end && (
+                <> — renews on {new Date(subscription.current_period_end).toLocaleDateString("en-IN")}</>
+              )}
+            </div>
+          )}
+
           {/* Plan Cards */}
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto mb-20">
             {(["basic", "pro", "institutional"] as PlanTier[]).map((tier, index) => {
